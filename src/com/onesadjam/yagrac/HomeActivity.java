@@ -1,0 +1,232 @@
+//===============================================================================
+// Copyright (c) 2010 Adam C Jones
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//===============================================================================
+
+package com.onesadjam.yagrac;
+
+import com.onesadjam.yagrac.R;
+import com.onesadjam.yagrac.xml.ResponseParser;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+
+public class HomeActivity extends Activity
+{
+	private final static int _LoginCode = 1;
+	
+	private String _UserId;
+	private String _AccessToken;
+	private String _AccessTokenSecret;
+	
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.homelayout);
+
+		SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.GoodReads", MODE_PRIVATE);
+		String token = sharedPreferences.getString("token", "");
+		String tokenSecret = sharedPreferences.getString("tokenSecret", "");
+		set_UserId(sharedPreferences.getString("userId", ""));
+		
+		Button myBooksButton = (Button)findViewById(R.id._MyBooksButton);
+		myBooksButton.setOnClickListener( new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				Intent viewShelfIntent = new Intent(v.getContext(), ViewShelfActivity.class);
+				viewShelfIntent.putExtra("com.onesadjam.GoodReads.UserId", get_UserId());
+				viewShelfIntent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", get_UserId());
+				v.getContext().startActivity(viewShelfIntent);				
+			}
+		});
+
+		Button findBooksButton = (Button)findViewById(R.id._FindBooksButton);
+		findBooksButton.setOnClickListener( new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				Intent searchIntent = new Intent(v.getContext(), SearchActivity.class);
+				searchIntent.putExtra("com.onesadjam.GoodReads.UserId", get_UserId());
+				searchIntent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", get_UserId());
+				v.getContext().startActivity(searchIntent);
+			}
+		});
+
+		Button friendsButton = (Button)findViewById(R.id._FriendsButton);
+		friendsButton.setOnClickListener( new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				Intent friendsIntent = new Intent(v.getContext(), SocialActivity.class);
+				friendsIntent.putExtra("com.onesadjam.GoodReads.UserId", get_UserId());
+				friendsIntent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", get_UserId());
+				v.getContext().startActivity(friendsIntent);
+			}
+		});
+
+		Button updatesButton = (Button)findViewById(R.id._UpdatesButton);
+		updatesButton.setOnClickListener( new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				Intent updatesIntent = new Intent(v.getContext(), UpdatesActivity.class);
+				updatesIntent.putExtra("com.onesadjam.GoodReads.UserId", get_UserId());
+				updatesIntent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", get_UserId());
+				v.getContext().startActivity(updatesIntent);
+			}
+		});
+
+		boolean isAuthenticated = false;
+		
+		if ( token == "" || token == null )
+		{
+			Intent loginIntent = new Intent(this, LoginActivity.class);
+			startActivityForResult(loginIntent, _LoginCode);
+		}
+		else
+		{
+			ResponseParser.SetTokenWithSecret(token, tokenSecret);
+			isAuthenticated = true;
+		}
+
+		myBooksButton.setEnabled(isAuthenticated);
+		updatesButton.setEnabled(isAuthenticated);
+		friendsButton.setEnabled(isAuthenticated);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu)
+	{
+		menu.clear();
+		final Context context = this;
+		if (get_UserId() != null && get_UserId() != "")
+		{
+			MenuItem logout = menu.add("Logout");
+			logout.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener()
+			{
+				@Override
+				public boolean onMenuItemClick(MenuItem item)
+				{
+					SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.GoodReads", MODE_PRIVATE);
+					SharedPreferences.Editor editor = sharedPreferences.edit();
+					editor.putString("token", "");
+					editor.putString("tokenSecret", "");
+					editor.commit();
+					
+					set_UserId("");
+
+					Button button = (Button)findViewById(R.id._FriendsButton);
+					button.setEnabled(false);
+					button = (Button)findViewById(R.id._MyBooksButton);
+					button.setEnabled(false);
+					button = (Button)findViewById(R.id._UpdatesButton);
+					button.setEnabled(false);
+						
+					return true;
+				}
+			});
+		}
+		else
+		{
+			MenuItem logon = menu.add("Logon");
+			logon.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener()
+			{
+				@Override
+				public boolean onMenuItemClick(MenuItem item)
+				{
+					Intent loginIntent = new Intent(context, LoginActivity.class);
+					startActivityForResult(loginIntent, _LoginCode);
+					return true;
+				}
+			});
+		}
+		return true;
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if (resultCode == RESULT_OK)
+		{
+			String token = data.getStringExtra("com.onesadjam.GoodReads.token");
+			String tokenSecret = data.getStringExtra("com.onesadjam.GoodReads.tokenSecret");
+			set_UserId(data.getStringExtra("com.onesadjam.GoodReads.userId"));
+			
+			if ( token != null && token != "" )
+			{
+				ResponseParser.SetTokenWithSecret(token, tokenSecret);
+			
+				Button button = (Button)findViewById(R.id._FindBooksButton);
+				button.setEnabled(true);
+				button = (Button)findViewById(R.id._FriendsButton);
+				button.setEnabled(true);
+				button = (Button)findViewById(R.id._MyBooksButton);
+				button.setEnabled(true);
+				button = (Button)findViewById(R.id._UpdatesButton);
+				button.setEnabled(true);
+			}
+		}
+	}
+
+	public String get_UserId()
+	{
+		return _UserId;
+	}
+
+	public void set_UserId(String _UserId)
+	{
+		this._UserId = _UserId;
+	}
+
+	public String get_AccessToken()
+	{
+		return _AccessToken;
+	}
+
+	public void set_AccessToken(String _AccessToken)
+	{
+		this._AccessToken = _AccessToken;
+	}
+
+	public String get_AccessTokenSecret()
+	{
+		return _AccessTokenSecret;
+	}
+
+	public void set_AccessTokenSecret(String _AccessTokenSecret)
+	{
+		this._AccessTokenSecret = _AccessTokenSecret;
+	}
+}
