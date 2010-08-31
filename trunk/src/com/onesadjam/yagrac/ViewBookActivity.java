@@ -51,7 +51,7 @@ public class ViewBookActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.viewuser);
+		setContentView(R.layout.viewbook);
 
 		_BookId = getIntent().getExtras().getString("com.onesadjam.GoodReads.BookId");
 		_AuthenticatedUserId = getIntent().getExtras().getString("com.onesadjam.GoodReads.AuthenticatedUserId");
