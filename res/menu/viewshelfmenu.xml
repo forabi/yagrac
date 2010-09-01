@@ -22,5 +22,12 @@
  -->
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android">
-<item android:id="@+id/_AddToShelf" android:title="Add To Shelf"></item>
+<item 
+	android:id="@+id/_AddToShelf" 
+	android:title="Add To Shelf"
+	android:icon="@drawable/ic_menu_add"></item>
+<item 
+	android:id="@+id/_ViewShelfMenu_ReviewBook" 
+	android:title="Review"
+	android:icon="@drawable/ic_menu_edit"></item>
 </menu>

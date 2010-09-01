@@ -32,14 +32,19 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ImageView.ScaleType;
 
 public class ViewBookActivity extends Activity
 {
+	private static final int BOOK_IMAGE_HEIGHT = 80;
+	private static final int BOOK_IMAGE_WIDTH = 60;
+
 	private String _BookId;
 	private String _AuthenticatedUserId;
 
@@ -60,6 +65,9 @@ public class ViewBookActivity extends Activity
 		{
 			Book bookDetails = ResponseParser.GetReviewsForBook(_BookId);
 			ImageView bookImage = (ImageView)findViewById(R.id._ViewBookImage);
+			bookImage.setScaleType(ScaleType.FIT_CENTER);
+			bookImage.setMinimumHeight((int)(BOOK_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
+			bookImage.setMinimumWidth((int)(BOOK_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
 			LazyImageLoader.LazyLoadImageView(this, new URL(bookDetails.get_ImageUrl()), R.drawable.nocover, bookImage);
 		}
 		catch (Exception e)
@@ -118,6 +126,12 @@ public class ViewBookActivity extends Activity
 		{
 			case R.id._ViewBookMenu_AddToShelf:
 				showDialog(PICK_SHELVES_DIALOG);
+				return true;
+			case R.id._ViewShelfMenu_ReviewBook:
+				Intent intent = new Intent(_Context, ReviewBookActivity.class);
+				intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
+				intent.putExtra("com.onesadjam.yagrac.BookId", _BookId);
+				_Context.startActivity(intent);
 				return true;
 		}
 

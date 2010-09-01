@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -39,6 +40,9 @@ import com.onesadjam.yagrac.xml.Book;
 
 public class BookAdapter extends BaseAdapter
 {
+	private static final int BOOK_IMAGE_HEIGHT = 80;
+	private static final int BOOK_IMAGE_WIDTH = 60;
+	
 	private Context _Context;
 	private List<Book> _Books = new ArrayList<Book>();
 	
@@ -80,7 +84,11 @@ public class BookAdapter extends BaseAdapter
 	{
 		LinearLayout listItem = new LinearLayout(_Context);
 		
-		ImageView bookImage;
+		ImageView bookImage = new ImageView(_Context);
+		bookImage.setScaleType(ScaleType.FIT_CENTER);
+		bookImage.setMinimumHeight((int)(BOOK_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
+		bookImage.setMinimumWidth((int)(BOOK_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
+		
 		try
 		{
 			Book book = _Books.get(position);
@@ -91,7 +99,7 @@ public class BookAdapter extends BaseAdapter
 						_Context, 
 						new URL(book.get_SmallImageUrl()), 
 						R.drawable.nocover,
-						null);
+						bookImage);
 			}
 			else
 			{

@@ -208,6 +208,12 @@ public class ViewShelfActivity extends Activity
 			case R.id._AddToShelf:
 				showDialog(PICK_SHELVES_DIALOG);
 				return true;
+			case R.id._ViewShelfMenu_ReviewBook:
+				Intent intent = new Intent(_Context, ReviewBookActivity.class);
+				intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
+				intent.putExtra("com.onesadjam.yagrac.BookId", _SelectedReview.get_Book().get_Id());
+				_Context.startActivity(intent);
+				return true;
 		}
 
 		return super.onOptionsItemSelected(item);

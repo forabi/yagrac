@@ -35,11 +35,16 @@ import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 
 public class UpdateItemAdapter extends BaseAdapter
 {
+	private static final int BOOK_IMAGE_HEIGHT = 80;
+	private static final int BOOK_IMAGE_WIDTH = 60;
+
 	private List<Update> _Updates = new ArrayList<Update>();
 	private Context _Context;
 	
@@ -81,6 +86,11 @@ public class UpdateItemAdapter extends BaseAdapter
 	{
 		LinearLayout updateItemView = new LinearLayout(_Context);
 		
+		ImageView bookImage = new ImageView(_Context);
+		bookImage.setScaleType(ScaleType.FIT_CENTER);
+		bookImage.setMinimumHeight((int)(BOOK_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
+		bookImage.setMinimumWidth((int)(BOOK_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
+
 		Update update = _Updates.get(position);
 		
 		if (update.get_ImageUrl() != null && update.get_ImageUrl() != "")
@@ -91,8 +101,8 @@ public class UpdateItemAdapter extends BaseAdapter
 					LazyImageLoader.LazyLoadImageView(
 						_Context, 
 						new URL(update.get_ImageUrl()), 
-						R.drawable.nophoto_unisex,
-						null));
+						R.drawable.nocover,
+						bookImage));
 			}
 			catch (MalformedURLException e)
 			{

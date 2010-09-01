@@ -36,9 +36,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 
 public class SocialAdapter extends BaseAdapter
 {
+	private static final int CONTACT_IMAGE_HEIGHT = 80;
+	private static final int CONTACT_IMAGE_WIDTH = 60;
+
 	private List<User> _Users = new ArrayList<User>();
 	private Context _Context;
 
@@ -79,14 +83,17 @@ public class SocialAdapter extends BaseAdapter
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
 		LinearLayout layout = new LinearLayout(_Context);
+		ImageView contactImage = new ImageView(_Context);
+		contactImage.setScaleType(ScaleType.FIT_CENTER);
+		contactImage.setMinimumHeight((int)(CONTACT_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
+		contactImage.setMinimumWidth((int)(CONTACT_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
 		try
 		{
-			ImageView contactImage = 
-				LazyImageLoader.LazyLoadImageView(
-						_Context, 
-						new URL(_Users.get(position).get_SmallImageUrl()), 
-						R.drawable.nophoto_unisex,
-						null);
+			LazyImageLoader.LazyLoadImageView(
+					_Context, 
+					new URL(_Users.get(position).get_SmallImageUrl()), 
+					R.drawable.nophoto_unisex,
+					contactImage);
 			layout.addView(contactImage);
 			TextView contactText = new TextView(_Context);
 			contactText.setText(_Users.get(position).get_Name());
