@@ -35,9 +35,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ImageView.ScaleType;
 
 public class ViewUserActivity extends Activity
 {
+	private static final int CONTACT_IMAGE_HEIGHT = 80;
+	private static final int CONTACT_IMAGE_WIDTH = 60;
+
 	private String _UserId;
 	private String _AuthenticatedUserId;
 	private User _UserDetails;
@@ -58,6 +62,9 @@ public class ViewUserActivity extends Activity
 		{
 			_UserDetails = ResponseParser.GetUserDetails(_UserId);
 			ImageView userImage = (ImageView)findViewById(R.id._ViewUserImage);
+			userImage.setScaleType(ScaleType.FIT_CENTER);
+			userImage.setMinimumHeight((int)(CONTACT_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
+			userImage.setMinimumWidth((int)(CONTACT_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
 			LazyImageLoader.LazyLoadImageView(this, new URL(_UserDetails.get_ImageUrl()), R.drawable.nophoto_unisex, userImage);
 			
 		}

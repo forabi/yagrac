@@ -37,9 +37,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 
 public class SearchResultAdapter extends BaseAdapter
 {
+	private static final int BOOK_IMAGE_HEIGHT = 80;
+	private static final int BOOK_IMAGE_WIDTH = 60;
+
 	private Context _Context;
 	private List<Work> _Results = new ArrayList<Work>();
 	
@@ -81,7 +85,11 @@ public class SearchResultAdapter extends BaseAdapter
 	{
 		LinearLayout listItem = new LinearLayout(_Context);
 		
-		ImageView bookImage;
+		ImageView bookImage = new ImageView(_Context);
+		bookImage.setScaleType(ScaleType.FIT_CENTER);
+		bookImage.setMinimumHeight((int)(BOOK_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
+		bookImage.setMinimumWidth((int)(BOOK_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
+
 		try
 		{
 			BestBook bestBook = _Results.get(position).get_BestBook();
@@ -92,7 +100,7 @@ public class SearchResultAdapter extends BaseAdapter
 						_Context, 
 						new URL(bestBook.get_SmallImageUrl()), 
 						R.drawable.nocover,
-						null);
+						bookImage);
 			}
 			else
 			{

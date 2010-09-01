@@ -45,7 +45,6 @@ public class LazyImageLoader
 		if (_CachedImages.containsKey(imageUrl))
 		{
 			imageView.setImageDrawable(_CachedImages.get(imageUrl));
-			imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 			return imageView;
 		}
 		
@@ -56,8 +55,8 @@ public class LazyImageLoader
     		@Override
     		public void handleMessage(Message message) 
     		{
+    			
     			imageView.setImageDrawable((Drawable) message.obj);
-    			imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
     		}
     	};
     	

@@ -35,9 +35,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ImageView.ScaleType;
 
 public class BookImageAdapter extends BaseAdapter
 {
+	private static final int BOOK_IMAGE_HEIGHT = 80;
+	private static final int BOOK_IMAGE_WIDTH = 60;
+
 	private List<Review> _Reviews = new ArrayList<Review>();
 	private Context _Context;
 	
@@ -77,14 +81,17 @@ public class BookImageAdapter extends BaseAdapter
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
-		ImageView bookImage = null;
+		ImageView bookImage = new ImageView(_Context);
+		bookImage.setScaleType(ScaleType.FIT_CENTER);
+		bookImage.setMinimumHeight((int)(BOOK_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
+		bookImage.setMinimumWidth((int)(BOOK_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
 		try
 		{
 			bookImage = LazyImageLoader.LazyLoadImageView(
 					_Context, 
 					new URL(_Reviews.get(position).get_Book().get_SmallImageUrl()), 
 					R.drawable.nocover,
-					null);
+					bookImage);
 		}
 		catch (MalformedURLException e)
 		{

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ Copyright (c) 2010 Adam C Jones
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ -->
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:gravity="center_horizontal">
+  <ImageView
+  	android:id="@+id/_ReviewBook_BookImage"
+  	android:layout_width="wrap_content"
+  	android:layout_height="wrap_content"
+  	android:src="@drawable/nocover"></ImageView>
+  <Spinner
+  	android:id="@+id/_ReviewBook_ShelfSpinner"
+  	android:layout_width="fill_parent"
+  	android:layout_height="wrap_content"></Spinner>
+  	<RatingBar
+  		android:id="@+id/_ReviewBook_Rating"
+  		android:numStars="5"
+  		android:stepSize="1"
+  		android:layout_width="wrap_content"
+  		android:layout_height="wrap_content"></RatingBar>
+		<TextView
+			android:id="@+id/_ReviewBook_DateRead"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="Date Read:\t1980-01-01"></TextView>
+		<Button
+			android:id="@+id/_ReviewBook_DatePickerButton"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="Pick Date Read"></Button>
+	<TextView
+		android:id="@+id/_ReviewBook_ReviewLabel"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:text="Review"></TextView>
+	<EditText
+		android:id="@+id/_ReviewBook_Review"
+		android:gravity="top"
+		android:layout_height="0px"
+		android:layout_width="fill_parent"
+		android:layout_weight="1"></EditText>
+	<Button
+		android:id="@+id/_ReviewBook_SubmitButton"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:text="Save"></Button>
+</LinearLayout>

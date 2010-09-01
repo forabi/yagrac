@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +44,8 @@ public class HomeActivity extends Activity
 	private String _AccessToken;
 	private String _AccessTokenSecret;
 	
+	private static float _ScalingFactor;  
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -51,6 +54,10 @@ public class HomeActivity extends Activity
 
 		setContentView(R.layout.homelayout);
 
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		set_ScalingFactor(metrics.density);
+		
 		SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.GoodReads", MODE_PRIVATE);
 		String token = sharedPreferences.getString("token", "");
 		String tokenSecret = sharedPreferences.getString("tokenSecret", "");
@@ -228,5 +235,15 @@ public class HomeActivity extends Activity
 	public void set_AccessTokenSecret(String _AccessTokenSecret)
 	{
 		this._AccessTokenSecret = _AccessTokenSecret;
+	}
+
+	public static void set_ScalingFactor(float _ScalingFactor)
+	{
+		HomeActivity._ScalingFactor = _ScalingFactor;
+	}
+
+	public static float get_ScalingFactor()
+	{
+		return _ScalingFactor;
 	}
 }
