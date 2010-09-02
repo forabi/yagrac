@@ -54,7 +54,7 @@ public class UpdatesActivity extends Activity
 			finish();
 		}
 		
-		_UserId = getIntent().getExtras().getString("com.onesadjam.GoodReads.UserId");
+		_UserId = getIntent().getExtras().getString("com.onesadjam.yagrac.UserId");
 
 		try
 		{	
@@ -97,7 +97,7 @@ public class UpdatesActivity extends Activity
 			public boolean onMenuItemClick(MenuItem item)
 			{
 				Intent updateStatusIntent = new Intent(context, UpdateStatusActivity.class);
-				updateStatusIntent.putExtra("com.onesadjam.GoodReads.UserId", _UserId);
+				updateStatusIntent.putExtra("com.onesadjam.yagrac.UserId", _UserId);
 				startActivity(updateStatusIntent);
 				return true;
 			}

@@ -120,7 +120,7 @@ public class LoginActivity extends Activity
 				String tokenSecret = _Consumer.getTokenSecret();
 				String userId = "";
 				
-				SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.GoodReads", MODE_PRIVATE);
+				SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.yagrac", MODE_PRIVATE);
 				SharedPreferences.Editor editor = sharedPreferences.edit();
 				editor.putString("token", token);
 				editor.putString("tokenSecret", tokenSecret);
@@ -137,7 +137,7 @@ public class LoginActivity extends Activity
 					
 					userId = responseData.get_User().get_Id();
 					
-					sharedPreferences = getSharedPreferences("com.onesadjam.GoodReads", MODE_PRIVATE);
+					sharedPreferences = getSharedPreferences("com.onesadjam.yagrac", MODE_PRIVATE);
 					editor = sharedPreferences.edit();
 					editor.putString("userId", userId);
 					editor.commit();
@@ -148,9 +148,9 @@ public class LoginActivity extends Activity
 				}
 
 				Intent tokens = new Intent(getIntent());
-				tokens.putExtra("com.onesadjam.GoodReads.token", token);
-				tokens.putExtra("com.onesadjam.GoodReads.tokenSecret", tokenSecret);
-				tokens.putExtra("com.onesadjam.GoodReads.userId", userId);
+				tokens.putExtra("com.onesadjam.yagrac.token", token);
+				tokens.putExtra("com.onesadjam.yagrac.tokenSecret", tokenSecret);
+				tokens.putExtra("com.onesadjam.yagrac.userId", userId);
 				setResult(RESULT_OK, tokens);
 				
 				Toast.makeText(this, "Thanks for authenticating!\nPlease close the browser to continue", Toast.LENGTH_LONG).show();
@@ -165,7 +165,7 @@ public class LoginActivity extends Activity
 		// we also might be resuming because the user backed out of the browser.
 		else
 		{
-			SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.GoodReads", MODE_PRIVATE);
+			SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.yagrac", MODE_PRIVATE);
 			String token = sharedPreferences.getString("token", "");
 			String tokenSecret = sharedPreferences.getString("tokenSecret", "");
 			String userId = sharedPreferences.getString("userId", "");
@@ -174,9 +174,9 @@ public class LoginActivity extends Activity
 			{
 
 				Intent tokens = new Intent(getIntent());
-				tokens.putExtra("com.onesadjam.GoodReads.token", token);
-				tokens.putExtra("com.onesadjam.GoodReads.tokenSecret", tokenSecret);
-				tokens.putExtra("com.onesadjam.GoodReads.userId", userId);
+				tokens.putExtra("com.onesadjam.yagrac.token", token);
+				tokens.putExtra("com.onesadjam.yagrac.tokenSecret", tokenSecret);
+				tokens.putExtra("com.onesadjam.yagrac.userId", userId);
 				setResult(RESULT_OK, tokens);
 				finish();
 			}

@@ -38,7 +38,8 @@
 	<EditText 
 		android:layout_height="wrap_content" 
 		android:id="@+id/_SearchText" 
-		android:layout_width="fill_parent">
+		android:layout_width="fill_parent"
+		android:imeOptions="actionSearch">
 	</EditText>
 	<Button 
 		android:layout_height="wrap_content" 

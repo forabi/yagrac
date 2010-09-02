@@ -40,24 +40,24 @@ public class SocialActivity extends TabActivity
 	    TabHost.TabSpec spec;
 	    
 		Intent launchingIntent = this.getIntent();
-		String userId = launchingIntent.getExtras().getString("com.onesadjam.GoodReads.UserId");
-		String authenticatedUserId = launchingIntent.getExtras().getString("com.onesadjam.GoodReads.AuthenticatedUserId");
+		String userId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.UserId");
+		String authenticatedUserId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
 
 	    Intent intent = new Intent().setClass(this, FriendsActivity.class);
-	    intent.putExtra("com.onesadjam.GoodReads.UserId", userId);
-	    intent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", authenticatedUserId);
+	    intent.putExtra("com.onesadjam.yagrac.UserId", userId);
+	    intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", authenticatedUserId);
 	    spec = tabs.newTabSpec("friends").setIndicator("Friends").setContent(intent);
 	    tabs.addTab(spec);
 
 	    intent = new Intent().setClass(this, FollowingActivity.class);
-	    intent.putExtra("com.onesadjam.GoodReads.UserId", userId);
-	    intent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", authenticatedUserId);
+	    intent.putExtra("com.onesadjam.yagrac.UserId", userId);
+	    intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", authenticatedUserId);
 	    spec = tabs.newTabSpec("Following").setIndicator("Following").setContent(intent);
 	    tabs.addTab(spec);
 
 	    intent = new Intent().setClass(this, FollowersActivity.class);
-	    intent.putExtra("com.onesadjam.GoodReads.UserId", userId);
-	    intent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", authenticatedUserId);
+	    intent.putExtra("com.onesadjam.yagrac.UserId", userId);
+	    intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", authenticatedUserId);
 	    spec = tabs.newTabSpec("followers").setIndicator("Followers").setContent(intent);
 	    tabs.addTab(spec);
 

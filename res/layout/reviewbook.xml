@@ -31,26 +31,33 @@
   	android:layout_width="wrap_content"
   	android:layout_height="wrap_content"
   	android:src="@drawable/nocover"></ImageView>
-  <Spinner
-  	android:id="@+id/_ReviewBook_ShelfSpinner"
-  	android:layout_width="fill_parent"
-  	android:layout_height="wrap_content"></Spinner>
+  
   	<RatingBar
   		android:id="@+id/_ReviewBook_Rating"
   		android:numStars="5"
   		android:stepSize="1"
   		android:layout_width="wrap_content"
   		android:layout_height="wrap_content"></RatingBar>
-		<TextView
-			android:id="@+id/_ReviewBook_DateRead"
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:text="Date Read:\t1980-01-01"></TextView>
-		<Button
-			android:id="@+id/_ReviewBook_DatePickerButton"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:text="Pick Date Read"></Button>
+	<TextView
+		android:id="@+id/_ReviewBook_Shelves"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:text="Shelves:\t"></TextView>
+	<Button
+		android:id="@+id/_ReviewBook_PickShelvesButton"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="Pick Shelves"></Button>
+	<TextView
+		android:id="@+id/_ReviewBook_DateRead"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:text="Date Read:\t1980-01-01"></TextView>
+	<Button
+		android:id="@+id/_ReviewBook_DatePickerButton"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="Pick Date Read"></Button>
 	<TextView
 		android:id="@+id/_ReviewBook_ReviewLabel"
 		android:layout_height="wrap_content"
