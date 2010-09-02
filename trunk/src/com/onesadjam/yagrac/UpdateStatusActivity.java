@@ -55,7 +55,7 @@ public class UpdateStatusActivity extends Activity
 		_Comment = (EditText)findViewById(R.id._UpdateStatusCommentEditText);
 		_PageNumber = (EditText)findViewById(R.id._UpdateStatusPageNumberEditText);
 
-		_UserId = getIntent().getExtras().getString("com.onesadjam.GoodReads.UserId");
+		_UserId = getIntent().getExtras().getString("com.onesadjam.yagrac.UserId");
 		
 		BookAdapter bookSpinnerAdapter = new BookAdapter(this);
 		

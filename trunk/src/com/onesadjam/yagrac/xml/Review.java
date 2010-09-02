@@ -34,7 +34,7 @@ import android.sax.StartElementListener;
 
 public class Review
 {
-	private int _Id;
+	private String _Id;
 	private Book _Book = new Book();
 	private int _Rating;
 	private int _Votes;
@@ -85,7 +85,7 @@ public class Review
 		this.get_Book().clear();
 		this.set_DateAdded("");
 		this.set_DateUpdated("");
-		this.set_Id(0);
+		this.set_Id("");
 		this.set_Link("");
 		this.set_Rating(0);
 		this.set_ReadAt("");
@@ -136,7 +136,7 @@ public class Review
 			@Override
 			public void end(String body)
 			{
-				review.set_Id(Integer.parseInt(body));
+				review.set_Id(body);
 			}
 		});
 		
@@ -261,11 +261,11 @@ public class Review
 		});
 	}
 	
-	public int get_Id()
+	public String get_Id()
 	{
 		return _Id;
 	}
-	public void set_Id(int _Id)
+	public void set_Id(String _Id)
 	{
 		this._Id = _Id;
 	}

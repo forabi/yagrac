@@ -42,8 +42,8 @@ import android.widget.ImageView.ScaleType;
 
 public class ViewBookActivity extends Activity
 {
-	private static final int BOOK_IMAGE_HEIGHT = 80;
-	private static final int BOOK_IMAGE_WIDTH = 60;
+	private static final int BOOK_IMAGE_HEIGHT = 160;
+	private static final int BOOK_IMAGE_WIDTH = 120;
 
 	private String _BookId;
 	private String _AuthenticatedUserId;
@@ -58,8 +58,8 @@ public class ViewBookActivity extends Activity
 		
 		setContentView(R.layout.viewbook);
 
-		_BookId = getIntent().getExtras().getString("com.onesadjam.GoodReads.BookId");
-		_AuthenticatedUserId = getIntent().getExtras().getString("com.onesadjam.GoodReads.AuthenticatedUserId");
+		_BookId = getIntent().getExtras().getString("com.onesadjam.yagrac.BookId");
+		_AuthenticatedUserId = getIntent().getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
 		
 		try
 		{
@@ -127,7 +127,7 @@ public class ViewBookActivity extends Activity
 			case R.id._ViewBookMenu_AddToShelf:
 				showDialog(PICK_SHELVES_DIALOG);
 				return true;
-			case R.id._ViewShelfMenu_ReviewBook:
+			case R.id._ViewBookMenu_Review:
 				Intent intent = new Intent(_Context, ReviewBookActivity.class);
 				intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
 				intent.putExtra("com.onesadjam.yagrac.BookId", _BookId);

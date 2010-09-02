@@ -58,7 +58,7 @@ public class HomeActivity extends Activity
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		set_ScalingFactor(metrics.density);
 		
-		SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.GoodReads", MODE_PRIVATE);
+		SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.yagrac", MODE_PRIVATE);
 		String token = sharedPreferences.getString("token", "");
 		String tokenSecret = sharedPreferences.getString("tokenSecret", "");
 		set_UserId(sharedPreferences.getString("userId", ""));
@@ -70,8 +70,8 @@ public class HomeActivity extends Activity
 			public void onClick(View v)
 			{
 				Intent viewShelfIntent = new Intent(v.getContext(), ViewShelfActivity.class);
-				viewShelfIntent.putExtra("com.onesadjam.GoodReads.UserId", get_UserId());
-				viewShelfIntent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", get_UserId());
+				viewShelfIntent.putExtra("com.onesadjam.yagrac.UserId", get_UserId());
+				viewShelfIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", get_UserId());
 				v.getContext().startActivity(viewShelfIntent);				
 			}
 		});
@@ -83,8 +83,8 @@ public class HomeActivity extends Activity
 			public void onClick(View v)
 			{
 				Intent searchIntent = new Intent(v.getContext(), SearchActivity.class);
-				searchIntent.putExtra("com.onesadjam.GoodReads.UserId", get_UserId());
-				searchIntent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", get_UserId());
+				searchIntent.putExtra("com.onesadjam.yagrac.UserId", get_UserId());
+				searchIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", get_UserId());
 				v.getContext().startActivity(searchIntent);
 			}
 		});
@@ -96,8 +96,8 @@ public class HomeActivity extends Activity
 			public void onClick(View v)
 			{
 				Intent friendsIntent = new Intent(v.getContext(), SocialActivity.class);
-				friendsIntent.putExtra("com.onesadjam.GoodReads.UserId", get_UserId());
-				friendsIntent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", get_UserId());
+				friendsIntent.putExtra("com.onesadjam.yagrac.UserId", get_UserId());
+				friendsIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", get_UserId());
 				v.getContext().startActivity(friendsIntent);
 			}
 		});
@@ -109,8 +109,8 @@ public class HomeActivity extends Activity
 			public void onClick(View v)
 			{
 				Intent updatesIntent = new Intent(v.getContext(), UpdatesActivity.class);
-				updatesIntent.putExtra("com.onesadjam.GoodReads.UserId", get_UserId());
-				updatesIntent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", get_UserId());
+				updatesIntent.putExtra("com.onesadjam.yagrac.UserId", get_UserId());
+				updatesIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", get_UserId());
 				v.getContext().startActivity(updatesIntent);
 			}
 		});
@@ -146,7 +146,7 @@ public class HomeActivity extends Activity
 				@Override
 				public boolean onMenuItemClick(MenuItem item)
 				{
-					SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.GoodReads", MODE_PRIVATE);
+					SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.yagrac", MODE_PRIVATE);
 					SharedPreferences.Editor editor = sharedPreferences.edit();
 					editor.putString("token", "");
 					editor.putString("tokenSecret", "");
@@ -187,9 +187,9 @@ public class HomeActivity extends Activity
 	{
 		if (resultCode == RESULT_OK)
 		{
-			String token = data.getStringExtra("com.onesadjam.GoodReads.token");
-			String tokenSecret = data.getStringExtra("com.onesadjam.GoodReads.tokenSecret");
-			set_UserId(data.getStringExtra("com.onesadjam.GoodReads.userId"));
+			String token = data.getStringExtra("com.onesadjam.yagrac.token");
+			String tokenSecret = data.getStringExtra("com.onesadjam.yagrac.tokenSecret");
+			set_UserId(data.getStringExtra("com.onesadjam.yagrac.userId"));
 			
 			if ( token != null && token != "" )
 			{

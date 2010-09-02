@@ -71,8 +71,8 @@ public class ViewShelfActivity extends Activity
 			// Request the list of shelves for the user.
 			Intent launchingIntent = this.getIntent();
 			
-			_UserId = launchingIntent.getExtras().getString("com.onesadjam.GoodReads.UserId");
-			_AuthenticatedUserId = getIntent().getExtras().getString("com.onesadjam.GoodReads.AuthenticatedUserId");
+			_UserId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.UserId");
+			_AuthenticatedUserId = getIntent().getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
 			ArrayAdapter<String> shelfSpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
 			shelfSpinner.setAdapter(shelfSpinnerAdapter);
 			
@@ -171,7 +171,7 @@ public class ViewShelfActivity extends Activity
 			case PICK_SHELVES_DIALOG:
 				final PickShelvesDialog pickShelvesDialog = new PickShelvesDialog(this);
 				pickShelvesDialog.set_UserId(_AuthenticatedUserId);
-				pickShelvesDialog.set_ReviewId(Integer.toString(_SelectedReview.get_Id()));
+				pickShelvesDialog.set_ReviewId(_SelectedReview.get_Id());
 				pickShelvesDialog.setOnDismissListener(new DialogInterface.OnDismissListener()
 				{
 					@Override
@@ -212,6 +212,10 @@ public class ViewShelfActivity extends Activity
 				Intent intent = new Intent(_Context, ReviewBookActivity.class);
 				intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
 				intent.putExtra("com.onesadjam.yagrac.BookId", _SelectedReview.get_Book().get_Id());
+				if (_UserId.equalsIgnoreCase(_AuthenticatedUserId))
+				{
+					intent.putExtra("com.onesadjam.yagrac.ReviewId", _SelectedReview.get_Id());
+				}
 				_Context.startActivity(intent);
 				return true;
 		}

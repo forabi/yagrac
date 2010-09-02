@@ -39,8 +39,8 @@ import android.widget.ImageView.ScaleType;
 
 public class ViewUserActivity extends Activity
 {
-	private static final int CONTACT_IMAGE_HEIGHT = 80;
-	private static final int CONTACT_IMAGE_WIDTH = 60;
+	private static final int CONTACT_IMAGE_HEIGHT = 160;
+	private static final int CONTACT_IMAGE_WIDTH = 120;
 
 	private String _UserId;
 	private String _AuthenticatedUserId;
@@ -55,8 +55,8 @@ public class ViewUserActivity extends Activity
 		setContentView(R.layout.viewuser);
 		
 		Intent launchingIntent = this.getIntent();
-		_UserId = launchingIntent.getExtras().getString("com.onesadjam.GoodReads.UserId");
-		_AuthenticatedUserId = launchingIntent.getExtras().getString("com.onesadjam.GoodReads.AuthenticatedUserId");
+		_UserId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.UserId");
+		_AuthenticatedUserId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
 		
 		try
 		{
@@ -88,8 +88,8 @@ public class ViewUserActivity extends Activity
 		{
 			case R.id._ViewUserMenu_ViewShelves:
 				Intent viewShelfIntent = new Intent(_Context, ViewShelfActivity.class);
-				viewShelfIntent.putExtra("com.onesadjam.GoodReads.UserId", _UserId);
-				viewShelfIntent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", _AuthenticatedUserId);
+				viewShelfIntent.putExtra("com.onesadjam.yagrac.UserId", _UserId);
+				viewShelfIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
 				_Context.startActivity(viewShelfIntent);				
 				return true;
 		}

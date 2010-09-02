@@ -47,8 +47,8 @@ public class FollowersActivity extends Activity
 		SocialAdapter contactAdapter = new SocialAdapter(this);
 		setContentView(listview);
 		
-		final String userId = getIntent().getExtras().getString("com.onesadjam.GoodReads.UserId");
-		final String authenticatedUserId = getIntent().getExtras().getString("com.onesadjam.GoodReads.AuthenticatedUserId");
+		final String userId = getIntent().getExtras().getString("com.onesadjam.yagrac.UserId");
+		final String authenticatedUserId = getIntent().getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
 
 		try
 		{
@@ -70,8 +70,8 @@ public class FollowersActivity extends Activity
 				{
 					User clickedUser = (User)arg0.getAdapter().getItem(arg2);
 					Intent viewUserIntent = new Intent(arg1.getContext(), ViewUserActivity.class);
-					viewUserIntent.putExtra("com.onesadjam.GoodReads.UserId", clickedUser.get_Id());
-					viewUserIntent.putExtra("com.onesadjam.GoodReads.AuthenticatedUserId", authenticatedUserId);
+					viewUserIntent.putExtra("com.onesadjam.yagrac.UserId", clickedUser.get_Id());
+					viewUserIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", authenticatedUserId);
 					arg1.getContext().startActivity(viewUserIntent);				
 
 				}

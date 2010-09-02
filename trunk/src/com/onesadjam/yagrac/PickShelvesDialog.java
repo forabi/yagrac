@@ -73,9 +73,9 @@ public class PickShelvesDialog extends Dialog
 			RadioButton readButton = new RadioButton(_Context);
 			RadioButton toReadButton = new RadioButton(_Context);
 			RadioButton currentlyReadingButton = new RadioButton(_Context);
-			readButton.setText("Read");
-			toReadButton.setText("To-Read");
-			currentlyReadingButton.setText("Currently-Reading");
+			readButton.setText("read");
+			toReadButton.setText("to-read");
+			currentlyReadingButton.setText("currently-reading");
 			radioGroup.addView(readButton);
 			radioGroup.addView(currentlyReadingButton);
 			radioGroup.addView(toReadButton);
@@ -100,6 +100,7 @@ public class PickShelvesDialog extends Dialog
 				CheckBox shelfCheckbox = new CheckBox(_Context);
 				shelfCheckbox.setText(shelfName);
 				linearLayout.addView(shelfCheckbox);
+				_UserShelfCheckboxes.add(shelfCheckbox);
 			}
 			
 			LinearLayout finishButtonsWrapper = new LinearLayout(_Context);

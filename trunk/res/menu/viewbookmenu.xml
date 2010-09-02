@@ -25,4 +25,7 @@
 <item 
 	android:id="@+id/_ViewBookMenu_AddToShelf" 
 	android:title="Add to Shelves" android:icon="@drawable/ic_menu_add"></item>
+<item 
+	android:id="@+id/_ViewBookMenu_Review" 
+	android:title="Review" android:icon="@drawable/ic_menu_edit"></item>
 </menu>
