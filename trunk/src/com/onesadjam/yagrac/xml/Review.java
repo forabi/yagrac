@@ -48,7 +48,9 @@ public class Review
 	private String _Body;
 	private String _Url;
 	private String _Link;
+	private String _CommentsCount;
 	private List<String> _Shelves = new ArrayList<String>();
+	private User _User = new User();
 	
 	public Review copy()
 	{
@@ -68,6 +70,8 @@ public class Review
 		reviewCopy.set_StartedAt(this.get_StartedAt());
 		reviewCopy.set_Url(this.get_Url());
 		reviewCopy.set_Votes(this.get_Votes());
+		reviewCopy.set_User(_User.copy());
+		reviewCopy.set_CommentsCount(this.get_CommentsCount());
 		
 		List<String> shelvesCopy = new ArrayList<String>();
 		for (int i = 0; i < _Shelves.size(); i++ )
@@ -95,7 +99,9 @@ public class Review
 		this.set_StartedAt("");
 		this.set_Url("");
 		this.set_Votes(0);	
+		this.set_CommentsCount("");
 		this._Shelves.clear();
+		this._User.clear();
 	}
 	
 	public static Review appendSingletonListener(final Element parentElement, int depth)
@@ -248,6 +254,15 @@ public class Review
 			}
 		});
 		
+		reviewElement.getChild("comments_count").setEndTextElementListener(new EndTextElementListener()
+		{
+			@Override
+			public void end(String body)
+			{
+				review.set_CommentsCount(body);
+			}
+		});
+		
 		review.set_Book(Book.appendSingletonListener(reviewElement, depth + 1));
 		
 		Element shelvesElement = reviewElement.getChild("shelves");
@@ -259,6 +274,8 @@ public class Review
 				review.get_Shelves().add(attributes.getValue("name"));
 			}
 		});
+		
+		review.set_User(User.appendSingletonListener(reviewElement, depth + 1));
 	}
 	
 	public String get_Id()
@@ -382,5 +399,25 @@ public class Review
 	public List<String> get_Shelves()
 	{
 		return _Shelves;
+	}
+
+	public void set_User(User _User)
+	{
+		this._User = _User;
+	}
+
+	public User get_User()
+	{
+		return _User;
+	}
+
+	public void set_CommentsCount(String _CommentsCount)
+	{
+		this._CommentsCount = _CommentsCount;
+	}
+
+	public String get_CommentsCount()
+	{
+		return _CommentsCount;
 	}	
 }
