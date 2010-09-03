@@ -70,7 +70,7 @@ public class Followers
 		this._Followers = _Followers;
 	}
 
-	public static Followers appendSingletonListener(final Element parentElement)
+	public static Followers appendSingletonListener(final Element parentElement, int depth)
 	{
 		final Followers followers = new Followers();
 		Element followersElement = parentElement.getChild("followers");
@@ -85,7 +85,7 @@ public class Followers
 			}
 		});
 		
-		followers.set_Followers(User.appendArrayListener(followersElement));
+		followers.set_Followers(User.appendArrayListener(followersElement, depth + 1));
 		
 		return followers;
 	}

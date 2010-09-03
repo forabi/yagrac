@@ -25,9 +25,12 @@ package com.onesadjam.yagrac.xml;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.xml.sax.Attributes;
+
 import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
+import android.sax.StartElementListener;
 
 public class Author
 {
@@ -39,6 +42,19 @@ public class Author
 	private float _AverageRating;
 	private int _RatingsCount;
 	private int _TextReviewsCount;
+	private int _BooksStart;
+	private int _BooksEnd;
+	private int _BooksTotal;
+	private int _FansCount;
+	private String _About;
+	private String _Influences;
+	private int _WorksCount;
+	private String _Gender;
+	private String _Hometown;
+	private String _BornAt;
+	private String _DiedAt;
+	private String _UserId;
+	private List<Book> _Books = new ArrayList<Book>();
 	
 	public Author copy()
 	{
@@ -52,6 +68,25 @@ public class Author
 		authorCopy.set_RatingsCount(this.get_RatingsCount());
 		authorCopy.set_SmallImageUrl(this.get_SmallImageUrl());
 		authorCopy.set_TextReviewsCount(this.get_TextReviewsCount());
+		authorCopy.set_BooksStart(this.get_BooksStart());
+		authorCopy.set_BooksEnd(this.get_BooksEnd());
+		authorCopy.set_BooksTotal(this.get_BooksTotal());
+		authorCopy.set_FansCount(this.get_FansCount());
+		authorCopy.set_About(this.get_About());
+		authorCopy.set_Influences(this.get_Influences());
+		authorCopy.set_WorksCount(this.get_WorksCount());
+		authorCopy.set_Gender(this.get_Gender());
+		authorCopy.set_Hometown(this.get_Hometown());
+		authorCopy.set_BornAt(this.get_BornAt());
+		authorCopy.set_DiedAt(this.get_DiedAt());
+		authorCopy.set_UserId(this.get_UserId());
+		
+		List<Book> booksCopy = new ArrayList<Book>();
+		for (int i = 0; i < _Books.size(); i++)
+		{
+			booksCopy.add(_Books.get(i).copy());
+		}
+		authorCopy.set_Books(booksCopy);
 
 		return authorCopy;
 	}
@@ -66,20 +101,33 @@ public class Author
 		this.set_RatingsCount(0);
 		this.set_SmallImageUrl("");
 		this.set_TextReviewsCount(0);
+		this.set_BooksEnd(0);
+		this.set_BooksStart(0);
+		this.set_BooksTotal(0);
+		this.set_FansCount(0);
+		this.set_About("");
+		this.set_Influences("");
+		this.set_WorksCount(0);
+		this.set_Gender("");
+		this.set_Hometown("");
+		this.set_BornAt("");
+		this.set_DiedAt("");
+		this.set_UserId("");
+		_Books.clear();
 	}
 	
-	public static Author appendSingletonListener(final Element parentElement)
+	public static Author appendSingletonListener(final Element parentElement, int depth)
 	{
 		final Author author = new Author();
 		
 		Element authorElement = parentElement.getChild("author");
 		
-		appendCommonListeners(authorElement, author);
+		appendCommonListeners(authorElement, author, depth);
 		
 		return author;
 	}
 	
-	public static List<Author> appendArrayListener(final Element parentElement)
+	public static List<Author> appendArrayListener(final Element parentElement, int depth)
 	{
 		final List<Author> authors = new ArrayList<Author>();
 		final Author author = new Author();
@@ -96,12 +144,12 @@ public class Author
 			}
 		});
 		
-		appendCommonListeners(authorElement, author);
+		appendCommonListeners(authorElement, author, depth);
 		
 		return authors;
 	}
 	
-	private static void appendCommonListeners(final Element authorElement, final Author author)
+	private static void appendCommonListeners(final Element authorElement, final Author author, int depth)
 	{
 		authorElement.getChild("id").setEndTextElementListener(new EndTextElementListener()
 		{
@@ -186,6 +234,121 @@ public class Author
 				}
 			}
 		});
+		
+		authorElement.getChild("fans_count").setEndTextElementListener(new EndTextElementListener()
+		{
+			@Override
+			public void end(String body)
+			{
+				if (body != null && body != "")
+				{
+					author.set_FansCount(Integer.parseInt(body));
+				}
+			}
+		});
+
+		authorElement.getChild("about").setEndTextElementListener(new EndTextElementListener()
+		{
+			@Override
+			public void end(String body)
+			{
+				author.set_About(body);
+			}
+		});
+
+		authorElement.getChild("influences").setEndTextElementListener(new EndTextElementListener()
+		{
+			@Override
+			public void end(String body)
+			{
+				author.set_Influences(body);
+			}
+		});
+
+		authorElement.getChild("works_count").setEndTextElementListener(new EndTextElementListener()
+		{
+			@Override
+			public void end(String body)
+			{
+				if (body != null && body != "")
+				{
+					author.set_WorksCount(Integer.parseInt(body));
+				}
+			}
+		});
+
+		authorElement.getChild("gender").setEndTextElementListener(new EndTextElementListener()
+		{
+			@Override
+			public void end(String body)
+			{
+				author.set_Gender(body);
+			}
+		});
+
+		authorElement.getChild("hometown").setEndTextElementListener(new EndTextElementListener()
+		{
+			@Override
+			public void end(String body)
+			{
+				author.set_Hometown(body);
+			}
+		});
+
+		authorElement.getChild("born_at").setEndTextElementListener(new EndTextElementListener()
+		{
+			@Override
+			public void end(String body)
+			{
+				author.set_BornAt(body);
+			}
+		});
+
+		authorElement.getChild("died_at").setEndTextElementListener(new EndTextElementListener()
+		{
+			@Override
+			public void end(String body)
+			{
+				author.set_DiedAt(body);
+			}
+		});
+
+		authorElement.getChild("user").getChild("id").setEndTextElementListener(new EndTextElementListener()
+		{
+			@Override
+			public void end(String body)
+			{
+				author.set_UserId(body);
+			}
+		});
+		
+		if (depth < 2 )
+		{
+			Element booksElement = authorElement.getChild("books");
+			booksElement.setStartElementListener(new StartElementListener()
+			{
+				@Override
+				public void start(Attributes attributes)
+				{
+					String value = attributes.getValue("start");
+					if (value != null && value.length() != 0)
+					{
+						author.set_BooksStart(Integer.parseInt(value));
+					}
+					value = attributes.getValue("end");
+					if (value != null && value.length() != 0)
+					{
+						author.set_BooksEnd(Integer.parseInt(value));
+					}
+					value = attributes.getValue("total");
+					if (value != null && value.length() != 0)
+					{
+						author.set_BooksTotal(Integer.parseInt(value));
+					}
+				}
+			});
+			author.set_Books(Book.appendArrayListener(booksElement, depth + 1));
+		}
 	}
 
 	public int get_Id()
@@ -251,5 +414,135 @@ public class Author
 	public void set_TextReviewsCount(int _TextReviewsCount)
 	{
 		this._TextReviewsCount = _TextReviewsCount;
+	}
+
+	public int get_BooksStart()
+	{
+		return _BooksStart;
+	}
+
+	public void set_BooksStart(int _BooksStart)
+	{
+		this._BooksStart = _BooksStart;
+	}
+
+	public int get_BooksEnd()
+	{
+		return _BooksEnd;
+	}
+
+	public void set_BooksEnd(int _BooksEnd)
+	{
+		this._BooksEnd = _BooksEnd;
+	}
+
+	public int get_BooksTotal()
+	{
+		return _BooksTotal;
+	}
+
+	public void set_BooksTotal(int _BooksTotal)
+	{
+		this._BooksTotal = _BooksTotal;
+	}
+
+	public List<Book> get_Books()
+	{
+		return _Books;
+	}
+
+	public void set_Books(List<Book> _Books)
+	{
+		this._Books = _Books;
+	}
+
+	public int get_FansCount()
+	{
+		return _FansCount;
+	}
+
+	public void set_FansCount(int _FansCount)
+	{
+		this._FansCount = _FansCount;
+	}
+
+	public String get_About()
+	{
+		return _About;
+	}
+
+	public void set_About(String _About)
+	{
+		this._About = _About;
+	}
+
+	public String get_Influences()
+	{
+		return _Influences;
+	}
+
+	public void set_Influences(String _Influences)
+	{
+		this._Influences = _Influences;
+	}
+
+	public int get_WorksCount()
+	{
+		return _WorksCount;
+	}
+
+	public void set_WorksCount(int _WorksCount)
+	{
+		this._WorksCount = _WorksCount;
+	}
+
+	public String get_Gender()
+	{
+		return _Gender;
+	}
+
+	public void set_Gender(String _Gender)
+	{
+		this._Gender = _Gender;
+	}
+
+	public String get_Hometown()
+	{
+		return _Hometown;
+	}
+
+	public void set_Hometown(String _Hometown)
+	{
+		this._Hometown = _Hometown;
+	}
+
+	public String get_BornAt()
+	{
+		return _BornAt;
+	}
+
+	public void set_BornAt(String _BornAt)
+	{
+		this._BornAt = _BornAt;
+	}
+
+	public String get_DiedAt()
+	{
+		return _DiedAt;
+	}
+
+	public void set_DiedAt(String _DiedAt)
+	{
+		this._DiedAt = _DiedAt;
+	}
+
+	public String get_UserId()
+	{
+		return _UserId;
+	}
+
+	public void set_UserId(String _UserId)
+	{
+		this._UserId = _UserId;
 	}
 }

@@ -37,6 +37,8 @@ public class Response
 	private Following _Following;
 	private Search _Search;
 	private Book _Book;
+	private Author _Author;
+	private Comments _Comments;
 	private List<Update> _Updates = new ArrayList<Update>();
 	
 	public void clear()
@@ -52,6 +54,8 @@ public class Response
 		this.get_Review().clear();
 		this.get_Updates().clear();
 		this.get_Book().clear();
+		this.get_Author().clear();
+		this.get_Comments().clear();
 	}
 	
 	public void copy()
@@ -68,6 +72,8 @@ public class Response
 		responseCopy.set_Following(this.get_Following());
 		responseCopy.set_Search(get_Search().copy());
 		responseCopy.set_Book(get_Book().copy());
+		responseCopy.set_Author(get_Author().copy());
+		responseCopy.set_Comments(get_Comments().copy());
 		
 		List<Update> updates = new ArrayList<Update>();
 		for (int i = 0; i < this.get_Updates().size(); i++)
@@ -185,5 +191,25 @@ public class Response
 	public void set_Book(Book _Book)
 	{
 		this._Book = _Book;
+	}
+
+	public void set_Author(Author _Author)
+	{
+		this._Author = _Author;
+	}
+
+	public Author get_Author()
+	{
+		return _Author;
+	}
+
+	public void set_Comments(Comments _Comments)
+	{
+		this._Comments = _Comments;
+	}
+
+	public Comments get_Comments()
+	{
+		return _Comments;
 	}
 }

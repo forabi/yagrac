@@ -22,43 +22,24 @@
 
 package com.onesadjam.yagrac.xml;
 
-import android.sax.Element;
-
-public class UpdateObject
+public class ResourceType
 {
-	private Book _Book = new Book();
-	
-	public void clear()
-	{
-		_Book.clear();
-	}
-	
-	public UpdateObject copy()
-	{
-		UpdateObject updateObjectCopy = new UpdateObject();
-		
-		updateObjectCopy.set_Book(_Book.copy());
-		
-		return updateObjectCopy;
-	}
-	
-	public static UpdateObject appendSingletonListener(Element parentElement, int depth)
-	{
-		final Element updateObjectElement = parentElement.getChild("object");
-		final UpdateObject updateObject = new UpdateObject();
-		
-		updateObject.set_Book(Book.appendSingletonListener(updateObjectElement, depth + 1));
-		
-		return updateObject;
-	}
-
-	public void set_Book(Book _Book)
-	{
-		this._Book = _Book;
-	}
-
-	public Book get_Book()
-	{
-		return _Book;
-	}
+	public static final String RATING = "rating";
+	public static final String PHOTO = "photo";
+	public static final String POLL = "poll";
+	public static final String LIST = "list";
+	public static final String AUTHOR_BLOG_POST = "author_blog_post"; 
+	public static final String BLOG = "blog";
+	public static final String QUIZ = "quiz"; 
+	public static final String LIBRARIAN_NOTE = "librarian_note"; 
+	public static final String INTERVIEW = "interview"; 
+	public static final String REVIEW = "review";
+	public static final String TOPIC = "topic"; 
+	public static final String OWNED_BOOK = "owned_book";
+	public static final String USER_LIST_VOTE = "user_list_vote"; 
+	public static final String RECOMMENDATION = "recommendation"; 
+	public static final String VIDEO = "video"; 
+	public static final String USER_STATUS = "user_status"; 
+	public static final String QUESTION = "question"; 
+	public static final String USER = "user";
 }

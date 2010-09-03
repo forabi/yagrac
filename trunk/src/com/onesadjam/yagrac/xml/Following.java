@@ -70,7 +70,7 @@ public class Following
 		this._Following = _Following;
 	}
 
-	public static Following appendSingletonListener(final Element parentElement)
+	public static Following appendSingletonListener(final Element parentElement, int depth)
 	{
 		final Following following = new Following();
 		Element followingElement = parentElement.getChild("following");
@@ -85,7 +85,7 @@ public class Following
 			}
 		});
 		
-		following.set_Following(User.appendArrayListener(followingElement));
+		following.set_Following(User.appendArrayListener(followingElement, depth + 1));
 		
 		return following;
 	}

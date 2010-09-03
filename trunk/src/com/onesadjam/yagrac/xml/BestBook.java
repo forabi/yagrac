@@ -55,13 +55,13 @@ public class BestBook
 		return bestBookCopy;
 	}
 	
-	public static BestBook appendSingletonListener(final Element parentElement)
+	public static BestBook appendSingletonListener(final Element parentElement, int depth)
 	{
 		final BestBook bestBook = new BestBook();
 		
 		Element bestBookElement = parentElement.getChild("best_book");
 		
-		bestBook.set_Author(Author.appendSingletonListener(bestBookElement));
+		bestBook.set_Author(Author.appendSingletonListener(bestBookElement, depth + 1));
 		appendCommonListeners(bestBookElement, bestBook);
 		
 		return bestBook;

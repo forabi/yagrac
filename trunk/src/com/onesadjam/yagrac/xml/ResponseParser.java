@@ -62,17 +62,19 @@ public class ResponseParser
 		
 		RootElement root = new RootElement("GoodreadsResponse");
 		
-		response.set_Book(Book.appendSingletonListener(root));
+		response.set_Book(Book.appendSingletonListener(root, 0));
 		response.set_Request(Request.appendSingletonListener(root));
-		response.set_User(User.appendSingletonListener(root));
-		response.set_Shelves(Shelves.appendSingletonListener(root));
-		response.set_Reviews(Reviews.appendSingletonListener(root));
-		response.set_Search(Search.appendSingletonListener(root));
-		response.set_Followers(Followers.appendSingletonListener(root));
-		response.set_Friends(Friends.appendSingletonListener(root));
-		response.set_Following(Following.appendSingletonListener(root));
-		response.set_Updates(Update.appendArrayListener(root));
-		response.set_Review(Review.appendSingletonListener(root));
+		response.set_User(User.appendSingletonListener(root, 0));
+		response.set_Shelves(Shelves.appendSingletonListener(root, 0));
+		response.set_Reviews(Reviews.appendSingletonListener(root, 0));
+		response.set_Search(Search.appendSingletonListener(root, 0));
+		response.set_Followers(Followers.appendSingletonListener(root, 0));
+		response.set_Friends(Friends.appendSingletonListener(root, 0));
+		response.set_Following(Following.appendSingletonListener(root, 0));
+		response.set_Updates(Update.appendArrayListener(root, 0));
+		response.set_Review(Review.appendSingletonListener(root, 0));
+		response.set_Author(Author.appendSingletonListener(root, 0));
+		response.set_Comments(Comments.appendSingletonListener(root, 0));
 		
 		Xml.parse(inputStream, Xml.Encoding.UTF_8, root.getContentHandler());
 
@@ -201,6 +203,33 @@ public class ResponseParser
 		return followersResponseData.get_Followers();
 	}
 	
+	public static Comments GetComments(String resourceId, String resourceType) throws Exception
+	{
+		return GetComments(resourceId, resourceType, 1);
+	}
+	
+	public static Comments GetComments(String resourceId, String resourceType, int page) throws Exception
+	{
+		Uri.Builder builder = new Uri.Builder();
+		builder.scheme("http");
+		builder.authority("www.goodreads.com");
+		builder.path("comment/index.xml");
+		builder.appendQueryParameter("key", _ConsumerKey);
+		builder.appendQueryParameter("id", resourceId);
+		builder.appendQueryParameter("type", resourceType);
+		builder.appendQueryParameter("page", Integer.toString(page));
+	
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpGet getRequest = new HttpGet(builder.build().toString());
+		HttpResponse response;
+	
+		response = httpClient.execute(getRequest);
+			
+		Response responseData = ResponseParser.parse(response.getEntity().getContent());
+			
+		return responseData.get_Comments();
+	}
+
 	public static void AddBookToShelf(String bookId, String shelfName) throws Exception
 	{
 		HttpClient httpClient = new DefaultHttpClient();
@@ -240,13 +269,14 @@ public class ResponseParser
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		parameters.add(new BasicNameValuePair("shelf", shelves.get(0)));
 		parameters.add(new BasicNameValuePair("review[review]", review));
-		parameters.add(new BasicNameValuePair("review[read-at]", dateRead));
+		parameters.add(new BasicNameValuePair("review[read_at]", dateRead));
 		parameters.add(new BasicNameValuePair("review[rating]", Integer.toString(rating)));
 		post.setEntity(new UrlEncodedFormEntity(parameters));
 		_Consumer.sign(post);
 		
 		HttpResponse response = httpClient.execute(post);
-		if (response.getStatusLine().getStatusCode() != 201)
+		int statusCode = response.getStatusLine().getStatusCode();
+		if (statusCode < 200 || statusCode > 299)
 		{
 			throw new Exception(response.getStatusLine().toString());
 		}
@@ -273,7 +303,7 @@ public class ResponseParser
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		parameters.add(new BasicNameValuePair("shelf", shelves.get(0)));
 		parameters.add(new BasicNameValuePair("review[review]", review));
-		parameters.add(new BasicNameValuePair("review[read-at]", dateRead));
+		parameters.add(new BasicNameValuePair("review[read_at]", dateRead));
 		parameters.add(new BasicNameValuePair("book_id", bookId));
 		parameters.add(new BasicNameValuePair("review[rating]", Integer.toString(rating)));
 		post.setEntity(new UrlEncodedFormEntity(parameters));
@@ -324,6 +354,25 @@ public class ResponseParser
 		}
 	}
 	
+	public static void PostComment(String resourceId, String resourceType, String comment) throws Exception
+	{
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpPost post = new HttpPost("http://www.goodreads.com/comment.xml");
+		
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(new BasicNameValuePair("comment[body]", comment));
+		parameters.add(new BasicNameValuePair("id", resourceId));
+		parameters.add(new BasicNameValuePair("type", resourceType));
+		post.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
+		_Consumer.sign(post);
+		
+		HttpResponse response = httpClient.execute(post);
+		if (response.getStatusLine().getStatusCode() != 201)
+		{
+			throw new Exception(response.getStatusLine().toString());
+		}
+	}
+
 	public static User GetUserDetails(String userId) throws Exception
 	{
 		Uri.Builder builder = new Uri.Builder();
@@ -425,6 +474,29 @@ public class ResponseParser
 		Response responseData = ResponseParser.parse(response.getEntity().getContent());
 		
 		return responseData.get_Book();
+	}
+	
+	public static Author GetBooksByAuthor(String authorId) throws Exception
+	{
+		return GetBooksByAuthor(authorId, 1);
+	}
+
+	public static Author GetBooksByAuthor(String authorId, int page) throws Exception
+	{
+		Uri.Builder builder = new Uri.Builder();
+		builder.scheme("http");
+		builder.authority("www.goodreads.com");
+		builder.path("author/list/" + authorId + ".xml");
+		builder.appendQueryParameter("key", _ConsumerKey);
+		builder.appendQueryParameter("page", Integer.toString(page));
+
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpGet getResponse = new HttpGet(builder.build().toString());
+		HttpResponse response = httpClient.execute(getResponse);
+		
+		Response responseData = ResponseParser.parse(response.getEntity().getContent());
+		
+		return responseData.get_Author();
 	}
 
 	private static void set_IsAuthenticated(boolean _IsAuthenticated)

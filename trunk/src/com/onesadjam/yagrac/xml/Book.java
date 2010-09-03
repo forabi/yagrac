@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.sax.Element;
+import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 
 public class Book
@@ -91,11 +92,40 @@ public class Book
 		this.set_YearPublished(0);
 	}
 
-	public static Book appendSingletonListener(Element parentElement)
+	public static Book appendSingletonListener(Element parentElement, int depth)
 	{
 		final Book book = new Book();
 		final Element bookElement = parentElement.getChild("book");
 		
+		appendCommonListeners(bookElement, book, depth);
+
+		return book;
+	}
+	
+
+	public static List<Book> appendArrayListener(Element parentElement, int depth)
+	{
+		final List<Book> books = new ArrayList<Book>();
+		final Book book = new Book();
+		final Element bookElement = parentElement.getChild("book");
+		
+		appendCommonListeners(bookElement, book, depth);
+		
+		bookElement.setEndElementListener(new EndElementListener()
+		{
+			@Override
+			public void end()
+			{
+				books.add(book.copy());
+				book.clear();
+			}
+		});
+		
+		return books;
+	}
+
+	private static void appendCommonListeners(final Element bookElement, final Book book, int depth)
+	{
 		bookElement.getChild("id").setEndTextElementListener(new EndTextElementListener()
 		{
 			@Override
@@ -232,9 +262,7 @@ public class Book
 		});
 		
 		Element authorsElement = bookElement.getChild("authors"); 
-		book.set_Authors(Author.appendArrayListener(authorsElement));
-
-		return book;
+		book.set_Authors(Author.appendArrayListener(authorsElement, depth + 1));
 	}
 	
 	public String get_Id()
