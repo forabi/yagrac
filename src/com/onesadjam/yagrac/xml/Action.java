@@ -52,7 +52,7 @@ public class Action
 		return actionCopy;
 	}
 	
-	public static Action appendSingletonListener(Element parentElement)
+	public static Action appendSingletonListener(Element parentElement, int depth)
 	{
 		final Action action = new Action();
 		final Element actionElement = parentElement.getChild("action");

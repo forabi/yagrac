@@ -98,23 +98,23 @@ public class Review
 		this._Shelves.clear();
 	}
 	
-	public static Review appendSingletonListener(final Element parentElement)
+	public static Review appendSingletonListener(final Element parentElement, int depth)
 	{
 		final Element reviewElement = parentElement.getChild("review");
 		final Review review = new Review();
 		
-		appendCommonListeners(reviewElement, review);
+		appendCommonListeners(reviewElement, review, depth);
 		
 		return review;
 	}
 	
-	public static List<Review> appendArrayListener(final Element parentElement)
+	public static List<Review> appendArrayListener(final Element parentElement, int depth)
 	{
 		final Element reviewElement = parentElement.getChild("review");
 		final List<Review> reviewList = new ArrayList<Review>();
 		final Review review = new Review();
 		
-		appendCommonListeners(reviewElement, review);
+		appendCommonListeners(reviewElement, review, depth);
 		
 		reviewElement.setEndElementListener(new EndElementListener()
 		{
@@ -129,7 +129,7 @@ public class Review
 		return reviewList;
 	}
 	
-	private static void appendCommonListeners(final Element reviewElement, final Review review)
+	private static void appendCommonListeners(final Element reviewElement, final Review review, int depth)
 	{
 		reviewElement.getChild("id").setEndTextElementListener(new EndTextElementListener()
 		{
@@ -248,7 +248,7 @@ public class Review
 			}
 		});
 		
-		review.set_Book(Book.appendSingletonListener(reviewElement));
+		review.set_Book(Book.appendSingletonListener(reviewElement, depth + 1));
 		
 		Element shelvesElement = reviewElement.getChild("shelves");
 		shelvesElement.getChild("shelf").setStartElementListener(new StartElementListener()

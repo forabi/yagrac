@@ -51,23 +51,23 @@ public class UserShelf
 		this.set_Name("");
 	}
 	
-	public static UserShelf appendSingletonListener(Element parentElement)
+	public static UserShelf appendSingletonListener(Element parentElement, int depth)
 	{
 		final UserShelf userShelf = new UserShelf();
 		final Element userShelfElement = parentElement.getChild("user_shelf");
 		
-		appendCommonListeners(userShelfElement, userShelf);
+		appendCommonListeners(userShelfElement, userShelf, depth);
 		
 		return userShelf;
 	}
 	
-	public static List<UserShelf> appendArrayListener(Element parentElement)
+	public static List<UserShelf> appendArrayListener(Element parentElement, int depth)
 	{
 		final List<UserShelf> userShelfList = new ArrayList<UserShelf>();
 		final UserShelf userShelf = new UserShelf();
 		final Element userShelfElement = parentElement.getChild("user_shelf");
 
-		appendCommonListeners(userShelfElement, userShelf);
+		appendCommonListeners(userShelfElement, userShelf, depth);
 
 		userShelfElement.setEndElementListener(new EndElementListener()
 		{
@@ -82,7 +82,7 @@ public class UserShelf
 		return userShelfList;
 	}
 	
-	private static void appendCommonListeners(final Element userShelfElement, final UserShelf userShelf)
+	private static void appendCommonListeners(final Element userShelfElement, final UserShelf userShelf, int depth)
 	{
 		userShelfElement.getChild("book_count").setEndTextElementListener(new EndTextElementListener()
 		{

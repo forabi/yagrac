@@ -133,18 +133,18 @@ public class User
 		_Updates.clear();
 	}
 	
-	public static User appendSingletonListener(final Element parentElement)
+	public static User appendSingletonListener(final Element parentElement, int depth)
 	{
 		final User user = new User();
 		
 		Element userElement = parentElement.getChild("user");
 
-		appendCommonListeners(userElement, user);
+		appendCommonListeners(userElement, user, depth);
 		
 		return user;
 	}
 	
-	public static List<User> appendArrayListener(final Element parentElement)
+	public static List<User> appendArrayListener(final Element parentElement, int depth)
 	{
 		final List<User> users = new ArrayList<User>();
 		final User user = new User();
@@ -161,12 +161,12 @@ public class User
 			}
 		});
 		
-		appendCommonListeners(userElement, user);
+		appendCommonListeners(userElement, user, depth);
 		
 		return users;
 	}
 	
-	private static void appendCommonListeners(final Element userElement, final User user)
+	private static void appendCommonListeners(final Element userElement, final User user, int depth)
 	{
 		userElement.setStartElementListener(new StartElementListener()
 		{
@@ -353,12 +353,12 @@ public class User
 		});
 		
 		Element userShelves = userElement.getChild("user_shelves");
-		user.set_Shelves(UserShelf.appendArrayListener(userShelves));
+		user.set_Shelves(UserShelf.appendArrayListener(userShelves, depth + 1));
 		
-		user.set_Updates(Update.appendArrayListener(userElement));
+		user.set_Updates(Update.appendArrayListener(userElement, depth + 1));
 		
 		Element favoriteAuthorsElement = userElement.getChild("favorite_authors");
-		user.set_FavoriteAuthors(Author.appendArrayListener(favoriteAuthorsElement));
+		user.set_FavoriteAuthors(Author.appendArrayListener(favoriteAuthorsElement, depth + 1));
 	}
 	
 	public String get_Name()

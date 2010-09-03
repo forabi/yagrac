@@ -52,7 +52,7 @@ public class Actor
 		return actorCopy;
 	}
 	
-	public static Actor appendSingletonListener(Element parentElement)
+	public static Actor appendSingletonListener(Element parentElement, int depth)
 	{
 		final Actor actor = new Actor();
 		final Element actorElement = parentElement.getChild("actor");

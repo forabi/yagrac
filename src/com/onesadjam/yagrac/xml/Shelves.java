@@ -63,7 +63,7 @@ public class Shelves
 		return shelvesCopy;
 	}
 	
-	public static Shelves appendSingletonListener(Element parentElement)
+	public static Shelves appendSingletonListener(Element parentElement, int depth)
 	{
 		final Shelves shelves = new Shelves();
 		final Element shelvesElement = parentElement.getChild("shelves");
@@ -79,7 +79,7 @@ public class Shelves
 			}
 		});
 		
-		shelves.set_UserShelves(UserShelf.appendArrayListener(shelvesElement));
+		shelves.set_UserShelves(UserShelf.appendArrayListener(shelvesElement, depth + 1));
 
 		return shelves;
 	}

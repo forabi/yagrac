@@ -70,7 +70,7 @@ public class Friends
 		this._Friends = _Friends;
 	}
 
-	public static Friends appendSingletonListener(final Element parentElement)
+	public static Friends appendSingletonListener(final Element parentElement, int depth)
 	{
 		final Friends friends = new Friends();
 		Element friendsElement = parentElement.getChild("friends");
@@ -85,7 +85,7 @@ public class Friends
 			}
 		});
 		
-		friends.set_Friends(User.appendArrayListener(friendsElement));
+		friends.set_Friends(User.appendArrayListener(friendsElement, depth + 1));
 		
 		return friends;
 	}

@@ -71,23 +71,23 @@ public class Work
 		return workCopy;
 	}
 	
-	public static Work appendSingletonListener(final Element parentElement)
+	public static Work appendSingletonListener(final Element parentElement, int depth)
 	{
 		final Work work = new Work();
 		final Element workElement = parentElement.getChild("work");
 		
-		appendCommonListeners(workElement, work);
+		appendCommonListeners(workElement, work, depth);
 		
 		return work;
 	}
 	
-	public static List<Work> appendArrayListener(final Element parentElement)
+	public static List<Work> appendArrayListener(final Element parentElement, int depth)
 	{
 		final List<Work> works = new ArrayList<Work>();
 		final Work work = new Work();
 		final Element workElement = parentElement.getChild("work");
 		
-		appendCommonListeners(workElement, work);
+		appendCommonListeners(workElement, work, depth);
 		
 		workElement.setEndElementListener(new EndElementListener()
 		{
@@ -101,9 +101,9 @@ public class Work
 		return works;
 	}
 	
-	private static void appendCommonListeners(final Element workElement, final Work work)
+	private static void appendCommonListeners(final Element workElement, final Work work, int depth)
 	{
-		work.set_BestBook(BestBook.appendSingletonListener(workElement));
+		work.set_BestBook(BestBook.appendSingletonListener(workElement, depth + 1));
 
 		workElement.getChild("books_count").setEndTextElementListener(new EndTextElementListener()
 		{

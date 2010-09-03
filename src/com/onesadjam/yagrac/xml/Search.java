@@ -64,13 +64,13 @@ public class Search
 		return searchCopy;
 	}
 	
-	public static Search appendSingletonListener(final Element parentElement)
+	public static Search appendSingletonListener(final Element parentElement, int depth)
 	{
 		final Search search = new Search();
 		
 		Element searchElement = parentElement.getChild("search");
 
-		appendCommonListeners(searchElement, search);
+		appendCommonListeners(searchElement, search, depth);
 		
 		return search;
 	}
@@ -82,10 +82,10 @@ public class Search
 //		return searches;
 //	}
 	
-	private static void appendCommonListeners(final Element searchElement, final Search search)
+	private static void appendCommonListeners(final Element searchElement, final Search search, int depth)
 	{
 		Element resultsElement = searchElement.getChild("results");
-		search.set_Results(Work.appendArrayListener(resultsElement));
+		search.set_Results(Work.appendArrayListener(resultsElement, depth + 1));
 
 		searchElement.getChild("query").setEndTextElementListener(new EndTextElementListener()
 		{

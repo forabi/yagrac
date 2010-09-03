@@ -30,61 +30,70 @@ import org.xml.sax.Attributes;
 import android.sax.Element;
 import android.sax.StartElementListener;
 
-public class Reviews
+public class Comments
 {
 	private int _Start;
 	private int _End;
 	private int _Total;
-	private List<Review> _Reviews = new ArrayList<Review>();
+	private List<Comment> _Comments = new ArrayList<Comment>();
 	
 	public void clear()
 	{
 		this.set_Start(0);
 		this.set_End(0);
 		this.set_Total(0);
-		this._Reviews.clear();
+		_Comments.clear();
 	}
 	
-	public Reviews copy()
+	public Comments copy()
 	{
-		Reviews reviewsCopy = new Reviews();
+		Comments commentsCopy = new Comments();
 		
-		reviewsCopy.set_Start(this.get_Start());
-		reviewsCopy.set_End(this.get_End());
-		reviewsCopy.set_Total(this.get_Total());
+		commentsCopy.set_Start(this.get_Start());
+		commentsCopy.set_End(this.get_End());
+		commentsCopy.set_Total(this.get_Total());
 		
-		List<Review> reviewList = this.get_Reviews();
-		List<Review> reviewListCopy = reviewsCopy.get_Reviews();
-		if (reviewList != null)
+		List<Comment> commentsListCopy = new ArrayList<Comment>();
+		for (int i = 0; i < _Comments.size(); i++)
 		{
-			for ( int i = 0; i < reviewList.size(); i++ )
-			{
-				reviewListCopy.add(reviewList.get(i).copy());
-			}
+			commentsListCopy.add(_Comments.get(i).copy());
 		}
+		commentsCopy.set_Comments(commentsListCopy);
 		
-		return reviewsCopy;
+		return commentsCopy;
 	}
 	
-	public static Reviews appendSingletonListener(Element parentElement, int depth)
+	public static Comments appendSingletonListener(Element parentElement, int depth)
 	{
-		final Reviews reviews = new Reviews();
-		Element reviewsElement = parentElement.getChild("reviews");
-	
-		reviewsElement.setStartElementListener(new StartElementListener()
+		final Comments comments = new Comments();
+		final Element commentsElement = parentElement.getChild("comments");
+		
+		commentsElement.setStartElementListener(new StartElementListener()
 		{
 			@Override
 			public void start(Attributes attributes)
 			{
-				reviews.set_Start(Integer.parseInt(attributes.getValue("start")));
-				reviews.set_End(Integer.parseInt(attributes.getValue("end")));
-				reviews.set_Total(Integer.parseInt(attributes.getValue("total")));
+				String value = attributes.getValue("start");
+				if (value != null && value.length() != 0)
+				{
+					comments.set_Start(Integer.parseInt(value));
+				}
+				value = attributes.getValue("end");
+				if (value != null && value.length() != 0)
+				{
+					comments.set_End(Integer.parseInt(value));
+				}
+				value = attributes.getValue("total");
+				if (value != null && value.length() != 0)
+				{
+					comments.set_Total(Integer.parseInt(value));
+				}
 			}
 		});
-
-		reviews.set_Reviews(Review.appendArrayListener(reviewsElement, depth + 1));
 		
-		return reviews;
+		comments.set_Comments(Comment.appendArrayListener(commentsElement, depth + 1));
+		
+		return comments;
 	}
 	
 	public int get_Start()
@@ -111,12 +120,14 @@ public class Reviews
 	{
 		this._Total = _Total;
 	}
-	public List<Review> get_Reviews()
+
+	public List<Comment> get_Comments()
 	{
-		return _Reviews;
+		return _Comments;
 	}
-	public void set_Reviews(List<Review> _Reviews)
+
+	public void set_Comments(List<Comment> _Comments)
 	{
-		this._Reviews = _Reviews;
+		this._Comments = _Comments;
 	}
 }

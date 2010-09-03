@@ -71,17 +71,17 @@ public class Update
 		return updateCopy;
 	}
 	
-	public static Update appendSingletonListener(Element parentElement)
+	public static Update appendSingletonListener(Element parentElement, int depth)
 	{
 		final Update update = new Update();
 		final Element updateElement = parentElement.getChild("update");
 		
-		appendCommonListeners(updateElement, update);
+		appendCommonListeners(updateElement, update, depth);
 		
 		return update;
 	}
 	
-	public static List<Update> appendArrayListener(Element parentElement)
+	public static List<Update> appendArrayListener(Element parentElement, int depth)
 	{
 		final Update update = new Update();
 		final List<Update> updateList = new ArrayList<Update>();
@@ -98,12 +98,12 @@ public class Update
 			}
 		});
 		
-		appendCommonListeners(updateElement, update);
+		appendCommonListeners(updateElement, update, depth);
 		
 		return updateList;
 	}
 	
-	private static void appendCommonListeners(final Element updateElement, final Update update)
+	private static void appendCommonListeners(final Element updateElement, final Update update, int depth)
 	{
 		updateElement.setStartElementListener(new StartElementListener()
 		{
@@ -150,9 +150,9 @@ public class Update
 			}
 		});
 		
-		update.set_Actor(Actor.appendSingletonListener(updateElement));
-		update.set_Action(Action.appendSingletonListener(updateElement));
-		update.set_UpdateObject(UpdateObject.appendSingletonListener(updateElement));
+		update.set_Actor(Actor.appendSingletonListener(updateElement, depth + 1));
+		update.set_Action(Action.appendSingletonListener(updateElement, depth + 1));
+		update.set_UpdateObject(UpdateObject.appendSingletonListener(updateElement, depth + 1));
 	}
 	
 	public void set_Link(String _Link)
