@@ -45,6 +45,7 @@ public class Book
 	private String _Description;
 	private List<Author> _Authors = new ArrayList<Author>();
 	private int _YearPublished;
+	private Reviews _Reviews = new Reviews();
 	
 	public Book copy()
 	{
@@ -70,6 +71,7 @@ public class Book
 		bookCopy.set_TextReviewsCount(this.get_TextReviewsCount());
 		bookCopy.set_Title(this.get_Title());
 		bookCopy.set_YearPublished(this.get_YearPublished());
+		bookCopy.set_Reviews(_Reviews.copy());
 		
 		return bookCopy;
 	}
@@ -90,6 +92,7 @@ public class Book
 		this.set_TextReviewsCount(0);
 		this.set_Title("");
 		this.set_YearPublished(0);
+		_Reviews.clear();
 	}
 
 	public static Book appendSingletonListener(Element parentElement, int depth)
@@ -263,6 +266,11 @@ public class Book
 		
 		Element authorsElement = bookElement.getChild("authors"); 
 		book.set_Authors(Author.appendArrayListener(authorsElement, depth + 1));
+		
+		if (depth < 2)
+		{
+			book.set_Reviews(Reviews.appendSingletonListener(bookElement, depth + 1));
+		}
 	}
 	
 	public String get_Id()
@@ -376,5 +384,15 @@ public class Book
 	public void set_YearPublished(int _YearPublished)
 	{
 		this._YearPublished = _YearPublished;
+	}
+
+	public void set_Reviews(Reviews _Reviews)
+	{
+		this._Reviews = _Reviews;
+	}
+
+	public Reviews get_Reviews()
+	{
+		return _Reviews;
 	}
 }
