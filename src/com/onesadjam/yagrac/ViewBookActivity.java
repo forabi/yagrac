@@ -22,81 +22,56 @@
 
 package com.onesadjam.yagrac;
 
-import java.net.URL;
 import java.util.List;
 
-import com.onesadjam.yagrac.xml.Book;
 import com.onesadjam.yagrac.xml.ResponseParser;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.app.TabActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.TabHost;
 import android.widget.Toast;
-import android.widget.ImageView.ScaleType;
 
-public class ViewBookActivity extends Activity
+public class ViewBookActivity extends TabActivity
 {
-	private static final int BOOK_IMAGE_HEIGHT = 160;
-	private static final int BOOK_IMAGE_WIDTH = 120;
-
-	private String _BookId;
-	private String _AuthenticatedUserId;
-
 	private static final int PICK_SHELVES_DIALOG = 1;
 	private final Context _Context = this;
 
+	private String _BookId;
+	private String _AuthenticatedUserId;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.viewbook);
-
-		_BookId = getIntent().getExtras().getString("com.onesadjam.yagrac.BookId");
-		_AuthenticatedUserId = getIntent().getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
+		setContentView(R.layout.friends);
 		
-		try
-		{
-			Book bookDetails = ResponseParser.GetReviewsForBook(_BookId);
-			ImageView bookImage = (ImageView)findViewById(R.id._ViewBookImage);
-			bookImage.setScaleType(ScaleType.FIT_CENTER);
-			bookImage.setMinimumHeight((int)(BOOK_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
-			bookImage.setMinimumWidth((int)(BOOK_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
-			LazyImageLoader.LazyLoadImageView(this, new URL(bookDetails.get_ImageUrl()), R.drawable.nocover, bookImage);
-			
-			StringBuilder sb = new StringBuilder();
-			
-			sb.append(bookDetails.get_Title() + "\nby\n");
-			for (int a = 0; a < bookDetails.get_Authors().size(); a++)
-			{
-				sb.append("\t" + bookDetails.get_Authors().get(a).get_Name() + "\n\n");
-			}
-			
-			sb.append("<b>Description</b>\n");
-			sb.append(bookDetails.get_Description());
-			
-			sb.append("\n<b>Reviews</b>\n");
-			
-			for (int r = 0; r < bookDetails.get_Reviews().get_Reviews().size(); r++)
-			{
-				sb.append(bookDetails.get_Reviews().get_Reviews().get(r).get_Body() + "\n");
-			}
-			
-			TextView textView = (TextView)findViewById(R.id._ViewBook_Text);
-			textView.setText(Html.fromHtml(sb.toString()));
-		}
-		catch (Exception e)
-		{
-			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-		}
+		TabHost tabs = getTabHost();
+	    TabHost.TabSpec spec;
+	    
+		Intent launchingIntent = this.getIntent();
+		_BookId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.BookId");
+		_AuthenticatedUserId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
+
+	    Intent intent = new Intent().setClass(this, ViewBookDetailsActivity.class);
+	    intent.putExtra("com.onesadjam.yagrac.BookId", _BookId);
+	    intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
+	    spec = tabs.newTabSpec("Details").setIndicator("Details").setContent(intent);
+	    tabs.addTab(spec);
+
+	    intent = new Intent().setClass(this, ViewBookReviewsActivity.class);
+	    intent.putExtra("com.onesadjam.yagrac.BookId", _BookId);
+	    intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
+	    spec = tabs.newTabSpec("Reviews").setIndicator("Reviews").setContent(intent);
+	    tabs.addTab(spec);
+
+	    tabs.setCurrentTab(0);
 	}
 
 	@Override
