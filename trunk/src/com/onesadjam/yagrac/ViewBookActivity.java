@@ -123,9 +123,19 @@ public class ViewBookActivity extends TabActivity
 		switch (item.getItemId())
 		{
 			case R.id._ViewBookMenu_AddToShelf:
+				if (_AuthenticatedUserId == null || _AuthenticatedUserId.length() == 0)
+				{
+					Toast.makeText(_Context, "You must be logged in to add books to your shelves.", Toast.LENGTH_LONG).show();
+					return true;
+				}
 				showDialog(PICK_SHELVES_DIALOG);
 				return true;
 			case R.id._ViewBookMenu_Review:
+				if (_AuthenticatedUserId == null || _AuthenticatedUserId.length() == 0)
+				{
+					Toast.makeText(_Context, "You must be logged in to review a book.", Toast.LENGTH_LONG).show();
+					return true;
+				}
 				Intent intent = new Intent(_Context, ReviewBookActivity.class);
 				intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
 				intent.putExtra("com.onesadjam.yagrac.BookId", _BookId);

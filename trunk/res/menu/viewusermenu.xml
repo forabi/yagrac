@@ -25,4 +25,10 @@
 <item 
 	android:id="@+id/_ViewUserMenu_ViewShelves" 
 	android:title="View Shelves" android:icon="@drawable/ic_menu_view"></item>
+<item 
+	android:id="@+id/_ViewUserMenu_AddFriend" 
+	android:title="Send Friend Request" android:icon="@drawable/ic_menu_send"></item>
+<item 
+	android:id="@+id/_ViewUserMenu_Follow" 
+	android:title="Follow Status" android:icon="@drawable/ic_menu_share"></item>
 </menu>
