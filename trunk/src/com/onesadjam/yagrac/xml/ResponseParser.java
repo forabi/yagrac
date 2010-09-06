@@ -84,6 +84,12 @@ public class ResponseParser
 	public static Reviews GetBooksOnShelf(String shelfName, String userId) 
 		throws ClientProtocolException, IOException, IllegalStateException, SAXException
 	{
+		return GetBooksOnShelf(shelfName, userId, 1);
+	}
+
+	public static Reviews GetBooksOnShelf(String shelfName, String userId, int page) 
+		throws ClientProtocolException, IOException, IllegalStateException, SAXException
+	{
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme("http");
 		builder.authority("www.goodreads.com");
@@ -93,6 +99,7 @@ public class ResponseParser
 		builder.appendQueryParameter("v", "2");
 		builder.appendQueryParameter("sort", "date_updated");
 		builder.appendQueryParameter("order", "d");
+		builder.appendQueryParameter("page", Integer.toString(page));
 		HttpGet getBooksOnShelfRequest = new HttpGet(builder.build().toString());
 		
 		HttpClient httpClient = new DefaultHttpClient();

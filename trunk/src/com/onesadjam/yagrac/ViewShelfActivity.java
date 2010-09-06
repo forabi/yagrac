@@ -26,6 +26,7 @@ import java.util.List;
 
 import com.onesadjam.yagrac.xml.ResponseParser;
 import com.onesadjam.yagrac.xml.Review;
+import com.onesadjam.yagrac.xml.Reviews;
 import com.onesadjam.yagrac.xml.UserShelf;
 
 import android.app.Activity;
@@ -34,6 +35,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,6 +50,11 @@ public class ViewShelfActivity extends Activity
 	private BookImageAdapter _BookGalleryAdapter;
 	private Review _SelectedReview;
 	private Context _Context;
+	private int _ReviewsOnCurrentShelf;
+	private int _ReviewsLoaded;
+	private int _ReviewsPerPage;
+	private String _CurrentShelfName;
+	private boolean _LoadingNextPage = false;
 	
 	private static final int PICK_SHELVES_DIALOG = 1;
 	
@@ -105,7 +113,12 @@ public class ViewShelfActivity extends Activity
 	{
 		try
 		{
-			List<Review> reviews = ResponseParser.GetBooksOnShelf(shelfName, _UserId).get_Reviews();
+			_CurrentShelfName = shelfName;
+			Reviews reviewsForShelf = ResponseParser.GetBooksOnShelf(shelfName, _UserId);
+			_ReviewsOnCurrentShelf = reviewsForShelf.get_Total();
+			_ReviewsLoaded = reviewsForShelf.get_End();
+			_ReviewsPerPage = reviewsForShelf.get_End();
+			List<Review> reviews = reviewsForShelf.get_Reviews();
 			_BookGalleryAdapter.clear();
 			for (int i = 0; i < reviews.size(); i++)
 			{
@@ -129,14 +142,63 @@ public class ViewShelfActivity extends Activity
 					bookDetails.setVisibility(View.VISIBLE);
 					
 					StringBuilder sb = new StringBuilder();
-					sb.append(_SelectedReview.get_Book().get_Title() + "\nBy:\n");
+					sb.append(_SelectedReview.get_Book().get_Title() + "<br />By:<br />");
 					for (int i = 0; i < _SelectedReview.get_Book().get_Authors().size(); i++)
 					{
-						sb.append("\t" + _SelectedReview.get_Book().get_Authors().get(i).get_Name() + "\n");
+						sb.append("&nbsp;&nbsp;&nbsp;&nbsp;" + _SelectedReview.get_Book().get_Authors().get(i).get_Name() + "<br />");
 					}
-					sb.append("\n" + Html.fromHtml(_SelectedReview.get_Book().get_Description()));
+					sb.append("<br /><b>User's Review</b><br />" + _SelectedReview.get_Body());
+					sb.append("<br /><br /><b>Description</b><br />" + _SelectedReview.get_Book().get_Description());
 					
-					bookDetails.setText(sb.toString());
+					bookDetails.setText(Html.fromHtml(sb.toString()));
+					
+					if (
+							_ReviewsOnCurrentShelf != _ReviewsLoaded &&
+							arg2 == _ReviewsLoaded - 2 && 
+							_ReviewsLoaded < _ReviewsOnCurrentShelf && 
+							!_LoadingNextPage)
+					{
+						_LoadingNextPage = true;
+						LoadNextPageOfBooks();
+					}
+				}
+
+				private void LoadNextPageOfBooks()
+				{
+					final Handler ReviewLoadedHandler = new Handler() 
+					{
+			    		@Override
+			    		public void handleMessage(Message message) 
+			    		{
+			    			Reviews reviews = (Reviews)message.obj;
+			    			for (int i = 0; i < reviews.get_Reviews().size(); i++)
+			    			{
+			    				_BookGalleryAdapter.AddBook(reviews.get_Reviews().get(i));
+			    			}
+			    			_ReviewsLoaded = reviews.get_End();
+			    			_LoadingNextPage = false;
+			    		}
+			    	};
+			    	
+			    	Thread thread = new Thread()
+			    	{
+			    		@Override
+			    		public void run() 
+			    		{
+							try
+							{
+								Reviews reviews = ResponseParser.GetBooksOnShelf(_CurrentShelfName, _UserId, (_ReviewsLoaded / _ReviewsPerPage) + 1);
+								Message message = ReviewLoadedHandler.obtainMessage(1, reviews);
+								ReviewLoadedHandler.sendMessage(message);	
+							}
+							catch (Exception e)
+							{
+								_LoadingNextPage = false;
+								e.printStackTrace();
+							}
+			    		}
+			    	};
+			    	thread.start();
 				}
 
 				@Override
@@ -206,9 +268,19 @@ public class ViewShelfActivity extends Activity
 		switch (item.getItemId())
 		{
 			case R.id._AddToShelf:
+				if (_AuthenticatedUserId == null || _AuthenticatedUserId.length() == 0)
+				{
+					Toast.makeText(_Context, "You must be logged in to add books to your shelves.", Toast.LENGTH_LONG).show();
+					return true;
+				}
 				showDialog(PICK_SHELVES_DIALOG);
 				return true;
 			case R.id._ViewShelfMenu_ReviewBook:
+				if (_AuthenticatedUserId == null || _AuthenticatedUserId.length() == 0)
+				{
+					Toast.makeText(_Context, "You must be logged in to review a book.", Toast.LENGTH_LONG).show();
+					return true;
+				}
 				Intent intent = new Intent(_Context, ReviewBookActivity.class);
 				intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
 				intent.putExtra("com.onesadjam.yagrac.BookId", _SelectedReview.get_Book().get_Id());

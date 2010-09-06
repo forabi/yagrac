@@ -53,11 +53,13 @@ public class BookImageAdapter extends BaseAdapter
 	public void AddBook(Review book)
 	{
 		_Reviews.add(book);
+		notifyDataSetChanged();
 	}
 	
 	public void clear()
 	{
 		_Reviews.clear();
+		notifyDataSetChanged();
 	}
 	
 	@Override
