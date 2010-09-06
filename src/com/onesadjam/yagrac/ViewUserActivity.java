@@ -31,9 +31,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 
@@ -67,6 +69,25 @@ public class ViewUserActivity extends Activity
 			userImage.setMinimumWidth((int)(CONTACT_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
 			LazyImageLoader.LazyLoadImageView(this, new URL(_UserDetails.get_ImageUrl()), R.drawable.nophoto_unisex, userImage);
 			
+			TextView userDetails = (TextView)findViewById(R.id._ViewUser_UserDetails);
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append(_UserDetails.get_Name() + "<br />");
+			sb.append("Location: " + _UserDetails.get_Location() + "<br /><br />");
+			sb.append("<b>About</b><br />");
+			sb.append(_UserDetails.get_About());
+			sb.append("<br /><b>Favorite Books</b><br />");
+			sb.append(_UserDetails.get_FavoriteBooks());
+			sb.append("<br /><b>Favorite Authors</b><br />");
+			
+			for (int i = 0; i < _UserDetails.get_FavoriteAuthors().size(); i++)
+			{
+				sb.append(_UserDetails.get_FavoriteAuthors().get(i).get_Name() + "<br />");
+			}
+			sb.append("<br /><b>Interests</b><br />");
+			sb.append(_UserDetails.get_Interests());
+			
+			userDetails.setText(Html.fromHtml(sb.toString()));
 		}
 		catch (Exception e)
 		{
@@ -91,6 +112,28 @@ public class ViewUserActivity extends Activity
 				viewShelfIntent.putExtra("com.onesadjam.yagrac.UserId", _UserId);
 				viewShelfIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
 				_Context.startActivity(viewShelfIntent);				
+				return true;
+			case R.id._ViewUserMenu_AddFriend:
+				try
+				{
+					ResponseParser.SendFriendRequest(_UserId);
+					Toast.makeText(_Context, "Friend Request Sent", Toast.LENGTH_LONG).show();
+				}
+				catch (Exception e)
+				{
+					Toast.makeText(_Context, "Error on Friend Request:\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+				}
+				return true;
+			case R.id._ViewUserMenu_Follow:
+				try
+				{
+					ResponseParser.FollowUser(_UserId);
+					Toast.makeText(_Context, "User Followed", Toast.LENGTH_LONG).show();
+				}
+				catch (Exception e)
+				{
+					Toast.makeText(_Context, "Error on Follow Request:\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+				}
 				return true;
 		}
 		return super.onOptionsItemSelected(item);

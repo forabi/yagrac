@@ -20,15 +20,23 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  -->
- <LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
-  android:gravity="center_horizontal"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
-<ImageView 
-	android:id="@+id/_ViewUserImage" 
-	android:layout_width="120dp" 
-	android:layout_height="160dp">
-</ImageView>
-</LinearLayout>
+ <ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+ 	android:layout_width="fill_parent"
+ 	android:layout_height="fill_parent">
+	<LinearLayout
+		android:gravity="center_horizontal"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<ImageView 
+			android:id="@+id/_ViewUserImage" 
+			android:layout_width="120dp" 
+			android:layout_height="160dp">
+		</ImageView>
+		<TextView
+			android:id="@+id/_ViewUser_UserDetails"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"></TextView>
+	</LinearLayout>
+</ScrollView>
