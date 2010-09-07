@@ -38,7 +38,7 @@
 		android:id="@+id/_LoginInstructionsTextView" 
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
-		android:text="Clicking the Login button will take you to the GoodReads login page.  Login there to give this application permission to access your account." 
+		android:text="Clicking the Login button will take you to the Goodreads login page.  Login there to give this application permission to access your account." 
 		android:textColor="#000" 
 		android:typeface="serif">
 	</TextView>
