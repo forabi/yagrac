@@ -22,18 +22,17 @@
 
 package com.onesadjam.yagrac;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import com.onesadjam.yagrac.xml.Response;
 import com.onesadjam.yagrac.xml.ResponseParser;
+import com.onesadjam.yagrac.xml.User;
 
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.OAuthNotAuthorizedException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -116,50 +115,68 @@ public class LoginActivity extends Activity
 			try
 			{
 				_Provider.retrieveAccessToken(_Consumer, oauthToken);
-				String token = _Consumer.getToken();
-				String tokenSecret = _Consumer.getTokenSecret();
-				String userId = "";
-				
-				SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.yagrac", MODE_PRIVATE);
-				SharedPreferences.Editor editor = sharedPreferences.edit();
-				editor.putString("token", token);
-				editor.putString("tokenSecret", tokenSecret);
-				editor.commit();
-
-				HttpGet getRequest = new HttpGet("http://www.goodreads.com/api/auth_user");
-				try
-				{
-					_Consumer.sign(getRequest);
-					HttpClient httpClient = new DefaultHttpClient();
-					HttpResponse response = httpClient.execute(getRequest);
-					
-					Response responseData = ResponseParser.parse(response.getEntity().getContent());
-					
-					userId = responseData.get_User().get_Id();
-					
-					sharedPreferences = getSharedPreferences("com.onesadjam.yagrac", MODE_PRIVATE);
-					editor = sharedPreferences.edit();
-					editor.putString("userId", userId);
-					editor.commit();
-				}
-				catch (Exception e)
-				{
-					Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-				}
-
-				Intent tokens = new Intent(getIntent());
-				tokens.putExtra("com.onesadjam.yagrac.token", token);
-				tokens.putExtra("com.onesadjam.yagrac.tokenSecret", tokenSecret);
-				tokens.putExtra("com.onesadjam.yagrac.userId", userId);
-				setResult(RESULT_OK, tokens);
-				
-				Toast.makeText(this, "Thanks for authenticating!\nPlease close the browser to continue", Toast.LENGTH_LONG).show();
+			}
+			catch (OAuthMessageSignerException e1)
+			{
+				Toast.makeText(this, "Message signer exception:\n" + e1.getMessage(), Toast.LENGTH_LONG).show();
 				finish();
+				return;
+			}
+			catch (OAuthNotAuthorizedException e1)
+			{
+				Toast.makeText(this, "Not Authorized Exception:\n" + e1.getMessage(), Toast.LENGTH_LONG).show();
+				finish();
+				return;
+			}
+			catch (OAuthExpectationFailedException e1)
+			{
+				Toast.makeText(this, "Expectation Failed Exception:\n" + e1.getMessage(), Toast.LENGTH_LONG).show();
+				finish();
+				return;
+			}
+			catch (OAuthCommunicationException e1)
+			{
+				Toast.makeText(this, "Communication Exception:\n" + e1.getMessage(), Toast.LENGTH_LONG).show();
+				finish();
+				return;
+			}
+			
+			String token = _Consumer.getToken();
+			String tokenSecret = _Consumer.getTokenSecret();
+			String userId = "";
+			ResponseParser.SetTokenWithSecret(token, tokenSecret);
+
+			
+			SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.yagrac", MODE_PRIVATE);
+			SharedPreferences.Editor editor = sharedPreferences.edit();
+			editor.putString("token", token);
+			editor.putString("tokenSecret", tokenSecret);
+			editor.commit();
+
+			try
+			{
+				User authorizedUser = ResponseParser.GetAuthorizedUser();
+				
+				userId = authorizedUser.get_Id();
+				
+				sharedPreferences = getSharedPreferences("com.onesadjam.yagrac", MODE_PRIVATE);
+				editor = sharedPreferences.edit();
+				editor.putString("userId", userId);
+				editor.commit();
 			}
 			catch (Exception e)
 			{
-				Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "Error getting authorized user:\n" + e.getMessage(), Toast.LENGTH_LONG).show();
 			}
+
+			Intent tokens = new Intent(getIntent());
+			tokens.putExtra("com.onesadjam.yagrac.token", token);
+			tokens.putExtra("com.onesadjam.yagrac.tokenSecret", tokenSecret);
+			tokens.putExtra("com.onesadjam.yagrac.userId", userId);
+			setResult(RESULT_OK, tokens);
+			
+			Toast.makeText(this, "Thanks for authenticating!\nPlease close the browser to continue", Toast.LENGTH_LONG).show();
+			finish();
 		}
 		
 		// we also might be resuming because the user backed out of the browser.

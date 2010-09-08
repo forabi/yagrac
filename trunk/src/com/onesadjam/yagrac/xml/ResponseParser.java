@@ -81,12 +81,23 @@ public class ResponseParser
 		return response;
 	}
 	
+	public static User GetAuthorizedUser() throws Exception
+	{
+		HttpGet getRequest = new HttpGet("http://www.goodreads.com/api/auth_user");
+		_Consumer.sign(getRequest);
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpResponse response = httpClient.execute(getRequest);
+		
+		Response responseData = ResponseParser.parse(response.getEntity().getContent());
+		return responseData.get_User();
+	}
+
 	public static Reviews GetBooksOnShelf(String shelfName, String userId) 
 		throws ClientProtocolException, IOException, IllegalStateException, SAXException
 	{
 		return GetBooksOnShelf(shelfName, userId, 1);
 	}
-
+	
 	public static Reviews GetBooksOnShelf(String shelfName, String userId, int page) 
 		throws ClientProtocolException, IOException, IllegalStateException, SAXException
 	{
@@ -310,7 +321,17 @@ public class ResponseParser
 		HttpPost post = new HttpPost("http://www.goodreads.com/review/" + reviewId + ".xml");
 		
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-		parameters.add(new BasicNameValuePair("shelf", shelves.get(0)));
+		
+		StringBuilder shelvesString = new StringBuilder();
+		if (shelves.size() > 0)
+		{
+			shelvesString.append(shelves.get(0));
+		}
+		for (int i = 1; i < shelves.size(); i++)
+		{
+			shelvesString.append("|" + shelves.get(i));
+		}
+		parameters.add(new BasicNameValuePair("shelf", shelvesString.toString()));
 		parameters.add(new BasicNameValuePair("review[review]", review));
 		parameters.add(new BasicNameValuePair("review[read_at]", dateRead));
 		parameters.add(new BasicNameValuePair("review[rating]", Integer.toString(rating)));
