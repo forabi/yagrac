@@ -39,7 +39,6 @@ public class ViewBookDetailsActivity extends Activity
 	private static final int BOOK_IMAGE_WIDTH = 120;
 
 	private String _BookId;
-	private String _AuthenticatedUserId;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -49,7 +48,6 @@ public class ViewBookDetailsActivity extends Activity
 		setContentView(R.layout.viewbookdetailstab);
 
 		_BookId = getIntent().getExtras().getString("com.onesadjam.yagrac.BookId");
-		_AuthenticatedUserId = getIntent().getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
 		
 		try
 		{

@@ -26,7 +26,6 @@ import com.onesadjam.yagrac.R;
 import com.onesadjam.yagrac.xml.ResponseParser;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -115,29 +114,6 @@ public class HomeActivity extends Activity
 			}
 		});
 
-		Button scanButton = (Button)findViewById(R.id._Home_ScanButton);
-		scanButton.setOnClickListener( new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				Intent scanIntent = new Intent(v.getContext(), ScanActivity.class);
-				scanIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", get_UserId());
-				v.getContext().startActivity(scanIntent);
-			}
-		});
-
-		Button aboutButton = (Button)findViewById(R.id._Home_AboutButton);
-		aboutButton.setOnClickListener( new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				Intent aboutIntent = new Intent(v.getContext(), AboutActivity.class);
-				v.getContext().startActivity(aboutIntent);
-			}
-		});
-
 		boolean isAuthenticated = false;
 		
 		if ( token == "" || token == null )
@@ -157,17 +133,35 @@ public class HomeActivity extends Activity
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.homemenu, menu);
+		return true;
+	}
+
+	@Override
 	public boolean onPrepareOptionsMenu(Menu menu)
 	{
-		menu.clear();
-		final Context context = this;
-		if (get_UserId() != null && get_UserId() != "")
+		MenuItem logout = menu.findItem(R.id._LogoutMenuItem);
+		
+		if (ResponseParser.get_IsAuthenticated())
 		{
-			MenuItem logout = menu.add("Logout");
-			logout.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener()
-			{
-				@Override
-				public boolean onMenuItemClick(MenuItem item)
+			logout.setTitle("Logout");
+		}
+		else
+		{
+			logout.setTitle("Logon");
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id._LogoutMenuItem:
+				if (ResponseParser.get_IsAuthenticated())
 				{
 					SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.yagrac", MODE_PRIVATE);
 					SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -183,26 +177,23 @@ public class HomeActivity extends Activity
 					button.setEnabled(false);
 					button = (Button)findViewById(R.id._UpdatesButton);
 					button.setEnabled(false);
-						
-					return true;
+					
+					ResponseParser.ClearAuthentication();
 				}
-			});
-		}
-		else
-		{
-			MenuItem logon = menu.add("Logon");
-			logon.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener()
-			{
-				@Override
-				public boolean onMenuItemClick(MenuItem item)
+				else
 				{
-					Intent loginIntent = new Intent(context, LoginActivity.class);
+					Intent loginIntent = new Intent(this, LoginActivity.class);
 					startActivityForResult(loginIntent, _LoginCode);
-					return true;
 				}
-			});
+				return true;
+				
+			case R.id._Home_AboutMenuItem:
+				Intent aboutIntent = new Intent(this, AboutActivity.class);
+				startActivity(aboutIntent);
+				return true;
 		}
-		return true;
+
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override

@@ -59,19 +59,6 @@
 		android:layout_height="wrap_content"
 		android:text="Friends">
 	</Button>
-	<Button 
-		android:id="@+id/_Home_ScanButton" 
-		android:enabled="false"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:text="Scan Books">
-	</Button>
-	<Button 
-		android:id="@+id/_Home_AboutButton" 
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:text="About">
-	</Button>
 	<RelativeLayout
 		android:layout_width="fill_parent"
         android:layout_height="fill_parent" >		

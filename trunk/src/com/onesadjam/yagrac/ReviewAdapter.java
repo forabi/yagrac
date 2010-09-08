@@ -103,7 +103,7 @@ public class ReviewAdapter extends BaseAdapter
 				reviewImage = LazyImageLoader.LazyLoadImageView(
 						_Context, 
 						new URL(review.get_User().get_SmallImageUrl()), 
-						R.drawable.nocover,
+						R.drawable.nophoto_unisex,
 						reviewImage);
 			}
 			else

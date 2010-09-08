@@ -41,7 +41,6 @@ import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.*;
 
 public class ViewShelfActivity extends Activity
@@ -270,7 +269,7 @@ public class ViewShelfActivity extends Activity
 	{
 		switch (item.getItemId())
 		{
-			case R.id._AddToShelf:
+			case R.id._ViewShelfMenu_AddToShelf:
 				if (_AuthenticatedUserId == null || _AuthenticatedUserId.length() == 0)
 				{
 					Toast.makeText(_Context, "You must be logged in to add books to your shelves.", Toast.LENGTH_LONG).show();
@@ -278,6 +277,7 @@ public class ViewShelfActivity extends Activity
 				}
 				showDialog(PICK_SHELVES_DIALOG);
 				return true;
+				
 			case R.id._ViewShelfMenu_ReviewBook:
 				if (_AuthenticatedUserId == null || _AuthenticatedUserId.length() == 0)
 				{
@@ -293,6 +293,13 @@ public class ViewShelfActivity extends Activity
 				}
 				_Context.startActivity(intent);
 				return true;
+				
+			case R.id._ViewShelfMenu_BookInfo:
+				Intent viewBookIntent = new Intent(_Context, ViewBookActivity.class);
+				viewBookIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
+				viewBookIntent.putExtra("com.onesadjam.yagrac.BookId", _SelectedReview.get_Book().get_Id());
+				_Context.startActivity(viewBookIntent);
+				return true;
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -307,6 +314,4 @@ public class ViewShelfActivity extends Activity
 	{
 		return _SelectedReview;
 	}
-	
-	
 }

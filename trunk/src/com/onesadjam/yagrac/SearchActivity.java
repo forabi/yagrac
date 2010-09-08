@@ -33,6 +33,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -45,6 +47,8 @@ public class SearchActivity extends Activity
 {
 	private Context _Context = this;
 	private String _AuthenticatedUserId;
+	
+	private static final int SCAN_BARCODE_REQUEST = 0;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -80,6 +84,13 @@ public class SearchActivity extends Activity
 		});
 	}
 	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.searchmenu, menu);
+		return true;
+	}
+
 	private void performSearch()
 	{
 		EditText searchTextView = (EditText) findViewById(R.id._SearchText);
@@ -128,5 +139,44 @@ public class SearchActivity extends Activity
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id._Search_Scan:
+				Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+//		        intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+				try
+				{
+					startActivityForResult(intent, SCAN_BARCODE_REQUEST);
+				}
+				catch (Exception e)
+				{
+					Toast.makeText(this, "Please install Barcode Scanner (ZXing) to scan barcodes.", Toast.LENGTH_LONG).show();
+				}
+				return true;				
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) 
+	{
+	    if (requestCode == SCAN_BARCODE_REQUEST) 
+	    {
+	    	if (resultCode == RESULT_OK) 
+	        {
+				String contents = intent.getStringExtra("SCAN_RESULT");
+				
+				EditText searchText = (EditText)findViewById(R.id._SearchText);
+				searchText.setText(contents);
+				performSearch();
+//				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+				// Handle successful scan
+	        }
+	    }
 	}
 }

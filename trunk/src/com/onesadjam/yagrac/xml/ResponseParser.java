@@ -557,4 +557,9 @@ public class ResponseParser
 		_Consumer.setTokenWithSecret(token, tokenSecret);
 		set_IsAuthenticated(true);
 	}
+	
+	public static void ClearAuthentication()
+	{
+		set_IsAuthenticated(false);
+	}
 }
