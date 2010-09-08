@@ -22,9 +22,8 @@
  -->
 <menu
 	xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:id="@+id/_LogoutMenuItem" android:title="Logout"></item>
 	<item 
-		android:id="@+id/_Home_AboutMenuItem" 
-		android:title="About"
-		android:icon="@drawable/ic_menu_info_details"></item>
+		android:id="@+id/_Search_Scan" 
+		android:title="Scan Barcode"
+		android:icon="@drawable/ic_menu_camera"></item>
 </menu>
