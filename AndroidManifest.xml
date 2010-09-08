@@ -60,6 +60,8 @@
 		<activity android:label="@string/app_name" android:name=".ReviewBookActivity"></activity>
 		<activity android:label="@string/app_name" android:name=".ViewBookReviewsActivity"></activity>
 		<activity android:label="@string/app_name" android:name=".ViewBookDetailsActivity"></activity>
+		<activity android:label="@string/app_name" android:name=".AboutActivity"></activity>
+		<activity android:label="@string/app_name" android:name=".ScanActivity"></activity>
 		<!-- Track Market installs from AdMob ads -->		
 		<receiver android:name="com.admob.android.ads.analytics.InstallReceiver" android:exported="true">
 			<intent-filter>

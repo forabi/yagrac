@@ -41,6 +41,7 @@ import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 
 public class ViewShelfActivity extends Activity
@@ -82,6 +83,7 @@ public class ViewShelfActivity extends Activity
 			_UserId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.UserId");
 			_AuthenticatedUserId = getIntent().getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
 			ArrayAdapter<String> shelfSpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+			shelfSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			shelfSpinner.setAdapter(shelfSpinnerAdapter);
 			
 			List<UserShelf> userShelves = ResponseParser.GetShelvesForUser(_UserId);
@@ -247,6 +249,7 @@ public class ViewShelfActivity extends Activity
 								try
 								{
 									ResponseParser.AddBookToShelf(_SelectedReview.get_Book().get_Id(), selectedShelves.get(i));
+									Toast.makeText(_Context, "added to " + selectedShelves.get(i), Toast.LENGTH_SHORT).show();
 								}
 								catch (Exception e)
 								{
