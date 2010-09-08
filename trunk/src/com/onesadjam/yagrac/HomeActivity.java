@@ -115,6 +115,29 @@ public class HomeActivity extends Activity
 			}
 		});
 
+		Button scanButton = (Button)findViewById(R.id._Home_ScanButton);
+		scanButton.setOnClickListener( new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				Intent scanIntent = new Intent(v.getContext(), ScanActivity.class);
+				scanIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", get_UserId());
+				v.getContext().startActivity(scanIntent);
+			}
+		});
+
+		Button aboutButton = (Button)findViewById(R.id._Home_AboutButton);
+		aboutButton.setOnClickListener( new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				Intent aboutIntent = new Intent(v.getContext(), AboutActivity.class);
+				v.getContext().startActivity(aboutIntent);
+			}
+		});
+
 		boolean isAuthenticated = false;
 		
 		if ( token == "" || token == null )

@@ -31,6 +31,7 @@ import com.onesadjam.yagrac.xml.Review;
 
 import android.content.Context;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -127,6 +128,7 @@ public class ReviewAdapter extends BaseAdapter
 			
 			TextView text = new TextView(_Context);
 			text.setText(Html.fromHtml(review.get_Body()));
+			text.setMovementMethod(LinkMovementMethod.getInstance());
 			bodyLayout.addView(text);
 			
 			text = new TextView(_Context);

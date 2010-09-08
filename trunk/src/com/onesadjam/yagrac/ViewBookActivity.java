@@ -102,6 +102,7 @@ public class ViewBookActivity extends TabActivity
 								try
 								{
 									ResponseParser.AddBookToShelf(_BookId, selectedShelves.get(i));
+									Toast.makeText(_Context, "added to " + selectedShelves.get(i), Toast.LENGTH_SHORT).show();
 								}
 								catch (Exception e)
 								{
