@@ -36,8 +36,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 public class PickShelvesDialog extends Dialog
@@ -62,30 +60,21 @@ public class PickShelvesDialog extends Dialog
 	{
 		super.onCreate(savedInstanceState);
 		
+		setContentView(R.layout.pickshelves);
+		setTitle("Add to Shelves");
+				
 		try
 		{
 			// TODO: select the current shelves the book belongs to.
 //			Review review = ResponseParser.GetReview(_ReviewId);
-			ScrollView scrollView = new ScrollView(_Context);
-			LinearLayout linearLayout = new LinearLayout(_Context);
-			linearLayout.setOrientation(LinearLayout.VERTICAL);
-			RadioGroup radioGroup = new RadioGroup(_Context);
-			RadioButton readButton = new RadioButton(_Context);
-			RadioButton toReadButton = new RadioButton(_Context);
-			RadioButton currentlyReadingButton = new RadioButton(_Context);
-			readButton.setText("read");
-			toReadButton.setText("to-read");
-			currentlyReadingButton.setText("currently-reading");
-			radioGroup.addView(readButton);
-			radioGroup.addView(currentlyReadingButton);
-			radioGroup.addView(toReadButton);
+			LinearLayout linearLayout = (LinearLayout)findViewById(R.id._PickShelves_UserShelves);
+			RadioButton readButton = (RadioButton)findViewById(R.id._PickShelves_ReadButton);
+			RadioButton toReadButton = (RadioButton)findViewById(R.id._PickShelves_ToReadButton);
+			RadioButton currentlyReadingButton = (RadioButton)findViewById(R.id._PickShelves_CurrentlyReadingButton);
 			_SystemShelfButtons.add(readButton);
 			_SystemShelfButtons.add(currentlyReadingButton);
 			_SystemShelfButtons.add(toReadButton);
-			linearLayout.addView(radioGroup);
 
-			setTitle("Pick Shelves");
-			
 			List<UserShelf> userShelves = ResponseParser.GetShelvesForUser(_UserId);
 			for (int i = 0; i < userShelves.size(); i++)
 			{
@@ -103,11 +92,7 @@ public class PickShelvesDialog extends Dialog
 				_UserShelfCheckboxes.add(shelfCheckbox);
 			}
 			
-			LinearLayout finishButtonsWrapper = new LinearLayout(_Context);
-			linearLayout.addView(finishButtonsWrapper);
-			
-			Button acceptButton = new Button(_Context);
-			acceptButton.setText("OK");
+			Button acceptButton = (Button)findViewById(R.id._PickShelves_OkButton);
 			acceptButton.setOnClickListener(new View.OnClickListener()
 			{
 				@Override
@@ -132,22 +117,6 @@ public class PickShelvesDialog extends Dialog
 					dismiss();
 				}
 			});
-			
-			Button cancelButton = new Button(_Context);
-			cancelButton.setText("Cancel");
-			cancelButton.setOnClickListener(new View.OnClickListener()
-			{
-				@Override
-				public void onClick(View v)
-				{
-					dismiss();
-				}
-			});
-			
-			finishButtonsWrapper.addView(acceptButton);
-			finishButtonsWrapper.addView(cancelButton);
-			scrollView.addView(linearLayout);
-			setContentView(scrollView);
 		}
 		catch (Exception e)
 		{
