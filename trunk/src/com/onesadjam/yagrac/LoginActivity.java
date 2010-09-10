@@ -73,6 +73,13 @@ public class LoginActivity extends Activity
 				try
 				{
 					authUrl = _Provider.retrieveRequestToken(_Consumer, _CallbackUrl);
+
+					SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.yagrac", MODE_PRIVATE);
+					SharedPreferences.Editor editor = sharedPreferences.edit();
+					editor.putString("RequestToken", _Consumer.getToken());
+					editor.putString("RequestTokenSecret", _Consumer.getTokenSecret());
+					editor.commit();
+
 					Context context = v.getContext();
 					context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(authUrl)));
 				}
@@ -110,11 +117,23 @@ public class LoginActivity extends Activity
 		if (uri != null && uri.toString().startsWith(_CallbackUrl))
 		{
 			String oauthToken = uri.getQueryParameter(OAuth.OAUTH_TOKEN);
-			
 			// this will populate token and token_secret in consumer
 			try
 			{
+				// Crazy sauce can happen here. Believe it or not, the entire app may have been flushed
+				// from memory while the browser was active.
+				SharedPreferences sharedPreferences = getSharedPreferences("com.onesadjam.yagrac", MODE_PRIVATE);
+				String requestToken = sharedPreferences.getString("RequestToken", "");
+				String requestTokenSecret = sharedPreferences.getString("RequestTokenSecret", "");
+				if (requestToken.length() == 0 || requestTokenSecret.length() == 0)
+				{
+					Toast.makeText(this, "The request tokens were lost, please close the browser and application and try again.", Toast.LENGTH_LONG).show();
+					finish();
+					return;
+				}
+				_Consumer.setTokenWithSecret(requestToken, requestTokenSecret);
 				_Provider.retrieveAccessToken(_Consumer, oauthToken);
+				
 			}
 			catch (OAuthMessageSignerException e1)
 			{
