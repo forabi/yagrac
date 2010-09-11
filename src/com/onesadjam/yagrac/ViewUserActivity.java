@@ -22,31 +22,20 @@
 
 package com.onesadjam.yagrac;
 
-import java.net.URL;
-
 import com.onesadjam.yagrac.xml.ResponseParser;
-import com.onesadjam.yagrac.xml.User;
-
-import android.app.Activity;
+import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.TabHost;
 import android.widget.Toast;
-import android.widget.ImageView.ScaleType;
 
-public class ViewUserActivity extends Activity
+public class ViewUserActivity extends TabActivity
 {
-	private static final int CONTACT_IMAGE_HEIGHT = 160;
-	private static final int CONTACT_IMAGE_WIDTH = 120;
-
 	private String _UserId;
 	private String _AuthenticatedUserId;
-	private User _UserDetails;
 	private final Context _Context = this;
 	
 	@Override
@@ -56,43 +45,26 @@ public class ViewUserActivity extends Activity
 				
 		setContentView(R.layout.viewuser);
 		
-		Intent launchingIntent = this.getIntent();
+		TabHost tabs = getTabHost();
+	    TabHost.TabSpec spec;
+
+	    Intent launchingIntent = this.getIntent();
 		_UserId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.UserId");
 		_AuthenticatedUserId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
 		
-		try
-		{
-			_UserDetails = ResponseParser.GetUserDetails(_UserId);
-			ImageView userImage = (ImageView)findViewById(R.id._ViewUserImage);
-			userImage.setScaleType(ScaleType.FIT_CENTER);
-			userImage.setMinimumHeight((int)(CONTACT_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
-			userImage.setMinimumWidth((int)(CONTACT_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
-			LazyImageLoader.LazyLoadImageView(this, new URL(_UserDetails.get_ImageUrl()), R.drawable.nophoto_unisex, userImage);
-			
-			TextView userDetails = (TextView)findViewById(R.id._ViewUser_UserDetails);
-			
-			StringBuilder sb = new StringBuilder();
-			sb.append(_UserDetails.get_Name() + "<br />");
-			sb.append("Location: " + _UserDetails.get_Location() + "<br /><br />");
-			sb.append("<b>About</b><br />");
-			sb.append(_UserDetails.get_About());
-			sb.append("<br /><b>Favorite Books</b><br />");
-			sb.append(_UserDetails.get_FavoriteBooks());
-			sb.append("<br /><b>Favorite Authors</b><br />");
-			
-			for (int i = 0; i < _UserDetails.get_FavoriteAuthors().size(); i++)
-			{
-				sb.append(_UserDetails.get_FavoriteAuthors().get(i).get_Name() + "<br />");
-			}
-			sb.append("<br /><b>Interests</b><br />");
-			sb.append(_UserDetails.get_Interests());
-			
-			userDetails.setText(Html.fromHtml(sb.toString()));
-		}
-		catch (Exception e)
-		{
-			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-		}
+	    Intent intent = new Intent().setClass(this, ViewUserDetailsActivity.class);
+	    intent.putExtra("com.onesadjam.yagrac.UserId", _UserId);
+	    intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
+	    spec = tabs.newTabSpec("Details").setIndicator("Details").setContent(intent);
+	    tabs.addTab(spec);
+
+	    intent = new Intent().setClass(this, ViewUserUpdatesActivity.class);
+	    intent.putExtra("com.onesadjam.yagrac.UserId", _UserId);
+	    intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
+	    spec = tabs.newTabSpec("Updates").setIndicator("Updates").setContent(intent);
+	    tabs.addTab(spec);
+
+	    tabs.setCurrentTab(0);
 	}
 
 	@Override
