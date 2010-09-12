@@ -31,29 +31,45 @@ import com.onesadjam.yagrac.xml.User;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class FollowingActivity extends Activity
+public class FollowingActivity extends Activity implements ILastItemRequestedListener
 {
+	private SocialAdapter _ContactAdapter;
+	private ListView _FollowingListView;
+	private int _PageSize = 20;
+	private int _TotalItems = 0;
+	private int _ItemsLoaded = 0;
+	private String _UserId = "";
+	private String _AuthenticatedUserId = "";
+	private boolean _LoadingNextPage = false;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		
-		ListView listview = new ListView(this);
-		SocialAdapter contactAdapter = new SocialAdapter(this);
-		setContentView(listview);
+		_ContactAdapter = new SocialAdapter(this);
+		_FollowingListView = new ListView(this);
+		
+		setContentView(_FollowingListView);
 		
 		Intent launchingIntent = this.getIntent();
-		String userId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.UserId");
-		final String authenticatedUserId = getIntent().getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
+		_UserId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.UserId");
+		_AuthenticatedUserId = getIntent().getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
 
 		try
 		{
-			Following followingXml = ResponseParser.GetFollowing(userId);
+			Following followingXml = ResponseParser.GetFollowing(_UserId);
+			_TotalItems = followingXml.get_Total();
+			_ItemsLoaded = followingXml.get_End();
+			_PageSize = _ItemsLoaded;
+
 			if (followingXml != null)
 			{
 				List<User> following = followingXml.get_Following();
@@ -61,14 +77,14 @@ public class FollowingActivity extends Activity
 				{
 					for ( int i = 0; i < following.size(); i++ )
 					{
-						contactAdapter.AddContact(following.get(i));
+						_ContactAdapter.AddContact(following.get(i));
 					}
 				}
 			}
 			
-			listview.setAdapter(contactAdapter);
+			_FollowingListView.setAdapter(_ContactAdapter);
 
-			listview.setOnItemClickListener(new AdapterView.OnItemClickListener()
+			_FollowingListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
 			{
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
@@ -76,15 +92,71 @@ public class FollowingActivity extends Activity
 					User clickedUser = (User)arg0.getAdapter().getItem(arg2);
 					Intent viewUserIntent = new Intent(arg1.getContext(), ViewUserActivity.class);
 					viewUserIntent.putExtra("com.onesadjam.yagrac.UserId", clickedUser.get_Id());
-					viewUserIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", authenticatedUserId);
+					viewUserIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
 					arg1.getContext().startActivity(viewUserIntent);				
 
 				}
 			});
+
+			_ContactAdapter.setLastItemRequestedListener(this);
 		}
 		catch (Exception e)
 		{
 			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
 		}
+	}
+	
+	@Override
+	public synchronized void onLastItemRequest(Object source, int requestedIndex)
+	{
+		if (!_LoadingNextPage)
+		{
+			_LoadingNextPage = true;
+			loadNextPage();
+		}
+	}
+	
+	private void loadNextPage()
+	{
+		if (_ItemsLoaded == _TotalItems)
+		{
+			_LoadingNextPage = false;
+			return;
+		}
+
+		final Handler contactsLoadedHandler = new Handler() 
+		{
+    		@Override
+    		public void handleMessage(Message message) 
+    		{
+    			Following following = (Following)message.obj;
+    			for (int i = 0; i < following.get_Following().size(); i++)
+    			{
+    				_ContactAdapter.AddContact(following.get_Following().get(i));
+    			}
+    			_ItemsLoaded = following.get_End();
+    			_LoadingNextPage = false;
+    		}
+    	};
+    	
+    	Thread thread = new Thread()
+    	{
+    		@Override
+    		public void run() 
+    		{
+				try
+				{
+					Following following = ResponseParser.GetFollowing(_UserId, (_ItemsLoaded / _PageSize) + 1);
+					Message message = contactsLoadedHandler.obtainMessage(1, following);
+					contactsLoadedHandler.sendMessage(message);	
+				}
+				catch (Exception e)
+				{
+					_LoadingNextPage = false;
+					e.printStackTrace();
+				}
+    		}
+    	};
+    	thread.start();
 	}
 }

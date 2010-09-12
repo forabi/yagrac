@@ -92,14 +92,12 @@ public class ResponseParser
 		return responseData.get_User();
 	}
 
-	public static Reviews GetBooksOnShelf(String shelfName, String userId) 
-		throws ClientProtocolException, IOException, IllegalStateException, SAXException
+	public static Reviews GetBooksOnShelf(String shelfName, String userId) throws Exception
 	{
 		return GetBooksOnShelf(shelfName, userId, 1);
 	}
 	
-	public static Reviews GetBooksOnShelf(String shelfName, String userId, int page) 
-		throws ClientProtocolException, IOException, IllegalStateException, SAXException
+	public static Reviews GetBooksOnShelf(String shelfName, String userId, int page) throws Exception
 	{
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme("http");
@@ -112,6 +110,10 @@ public class ResponseParser
 		builder.appendQueryParameter("order", "d");
 		builder.appendQueryParameter("page", Integer.toString(page));
 		HttpGet getBooksOnShelfRequest = new HttpGet(builder.build().toString());
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getBooksOnShelfRequest);
+		}
 		
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response;
@@ -122,14 +124,12 @@ public class ResponseParser
 		return responseData.get_Reviews();
 	}
 	
-	public static Review GetReview(String reviewId)
-		throws ClientProtocolException, IOException, IllegalStateException, SAXException
+	public static Review GetReview(String reviewId) throws Exception
 	{
 		return GetReview(reviewId, 1);
 	}
 	
-	public static Review GetReview(String reviewId, int page)
-		throws ClientProtocolException, IOException, IllegalStateException, SAXException
+	public static Review GetReview(String reviewId, int page) throws Exception
 	{
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme("http");
@@ -138,6 +138,10 @@ public class ResponseParser
 		builder.appendQueryParameter("key", _ConsumerKey);
 		builder.appendQueryParameter("id", reviewId);
 		HttpGet getBooksOnShelfRequest = new HttpGet(builder.build().toString());
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getBooksOnShelfRequest);
+		}
 		
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response;
@@ -148,8 +152,7 @@ public class ResponseParser
 		return responseData.get_Review();
 	}
 	
-	public static List<UserShelf> GetShelvesForUser(String userId) 
-		throws ClientProtocolException, IOException, IllegalStateException, SAXException
+	public static List<UserShelf> GetShelvesForUser(String userId) throws Exception
 	{
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme("http");
@@ -161,6 +164,10 @@ public class ResponseParser
 
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpGet getShelvesRequest = new HttpGet(builder.build().toString());
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getShelvesRequest);
+		}
 		HttpResponse shelvesResponse = httpClient.execute(getShelvesRequest);
 		
 		Response shelvesResponseData = ResponseParser.parse(shelvesResponse.getEntity().getContent());
@@ -184,8 +191,11 @@ public class ResponseParser
 		builder.path("updates/friends.xml");
 
 		HttpGet getUpdatesRequest = new HttpGet(builder.build().toString());
-
-		_Consumer.sign(getUpdatesRequest);
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getUpdatesRequest);
+		}
+		
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = httpClient.execute(getUpdatesRequest);
 		
@@ -193,14 +203,12 @@ public class ResponseParser
 		return updatesResponse.get_Updates();
 	}
 	
-	public static Followers GetFollowers(String userId) 
-		throws ClientProtocolException, IllegalStateException, IOException, SAXException
+	public static Followers GetFollowers(String userId) throws Exception 
 	{
 		return GetFollowers(userId, 1);
 	}
 	
-	public static Followers GetFollowers(String userId, int page) 
-		throws ClientProtocolException, IOException, IllegalStateException, SAXException
+	public static Followers GetFollowers(String userId, int page) throws Exception
 	{
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme("http");
@@ -212,6 +220,10 @@ public class ResponseParser
 
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpGet getFriendsRequest = new HttpGet(builder.build().toString());
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getFriendsRequest);
+		}
 		HttpResponse followersResponse;
 
 		followersResponse = httpClient.execute(getFriendsRequest);
@@ -239,6 +251,11 @@ public class ResponseParser
 	
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpGet getRequest = new HttpGet(builder.build().toString());
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getRequest);
+		}
+		
 		HttpResponse response;
 	
 		response = httpClient.execute(getRequest);
@@ -447,6 +464,10 @@ public class ResponseParser
 
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpGet getRequest = new HttpGet(builder.build().toString());
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getRequest);
+		}
 		HttpResponse response;
 
 		response = httpClient.execute(getRequest);
@@ -458,6 +479,11 @@ public class ResponseParser
 	
 	public static Following GetFollowing(String userId) throws Exception
 	{
+		return GetFollowing(userId, 1);
+	}
+	
+	public static Following GetFollowing(String userId, int page) throws Exception
+	{
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme("http");
 		builder.authority("www.goodreads.com");
@@ -465,9 +491,14 @@ public class ResponseParser
 		builder.appendQueryParameter("format", "xml");
 		builder.appendQueryParameter("key", _ConsumerKey);
 		builder.appendQueryParameter("sort", "first_name");
+		builder.appendQueryParameter("page", Integer.toString(page));
 
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpGet getFriendsRequest = new HttpGet(builder.build().toString());
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getFriendsRequest);
+		}
 		HttpResponse followingResponse;
 
 		followingResponse = httpClient.execute(getFriendsRequest);
@@ -479,6 +510,11 @@ public class ResponseParser
 	
 	public static Friends GetFriends(String userId) throws Exception
 	{
+		return GetFriends(userId, 1);
+	}
+	
+	public static Friends GetFriends(String userId, int page) throws Exception
+	{
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme("http");
 		builder.authority("www.goodreads.com");
@@ -486,9 +522,14 @@ public class ResponseParser
 		builder.appendQueryParameter("format", "xml");
 		builder.appendQueryParameter("key", _ConsumerKey);
 		builder.appendQueryParameter("sort", "first_name");
+		builder.appendQueryParameter("page", Integer.toString(page));
 
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpGet getFriendsRequest = new HttpGet(builder.build().toString());
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getFriendsRequest);
+		}
 		HttpResponse friendsResponse;
 		
 		friendsResponse = httpClient.execute(getFriendsRequest);

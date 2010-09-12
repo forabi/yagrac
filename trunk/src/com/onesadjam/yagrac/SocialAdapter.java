@@ -37,6 +37,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ImageView.ScaleType;
+import android.widget.Toast;
 
 public class SocialAdapter extends BaseAdapter
 {
@@ -45,6 +46,7 @@ public class SocialAdapter extends BaseAdapter
 
 	private List<User> _Users = new ArrayList<User>();
 	private Context _Context;
+	private ILastItemRequestedListener _LastItemRequestedListener = null;
 
 	public SocialAdapter(Context c)
 	{
@@ -98,13 +100,21 @@ public class SocialAdapter extends BaseAdapter
 			TextView contactText = new TextView(_Context);
 			contactText.setText(_Users.get(position).get_Name());
 			layout.addView(contactText);
+			
+			if (position == _Users.size() - 1 && _LastItemRequestedListener != null)
+			{
+				_LastItemRequestedListener.onLastItemRequest(this, position);
+			}
 		}
 		catch (MalformedURLException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Toast.makeText(_Context, e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 		return layout;
 	}
 
+	public void setLastItemRequestedListener(ILastItemRequestedListener lastItemRequestedListener)
+	{
+		_LastItemRequestedListener = lastItemRequestedListener;
+	}
 }
