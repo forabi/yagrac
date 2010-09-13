@@ -134,6 +134,7 @@ public class FriendsActivity extends Activity implements ILastItemRequestedListe
     			{
     				_ContactAdapter.AddContact(friends.get_Friends().get(i));
     			}
+				_ContactAdapter.notifyDataSetChanged();
     			_ItemsLoaded = friends.get_End();
     			_LoadingNextPage = false;
     		}

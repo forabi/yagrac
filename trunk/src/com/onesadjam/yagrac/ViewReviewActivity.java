@@ -22,9 +22,42 @@
 
 package com.onesadjam.yagrac;
 
-import android.app.Activity;
+import android.app.TabActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.TabHost;
 
-public class ViewReviewActivity extends Activity
+public class ViewReviewActivity extends TabActivity
 {
+	private String _ReviewId;
+	private String _AuthenticatedUserId;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.friends);
+		
+		TabHost tabs = getTabHost();
+	    TabHost.TabSpec spec;
+	    
+		Intent launchingIntent = this.getIntent();
+		_ReviewId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.ReviewId");
+		_AuthenticatedUserId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
 
+	    Intent intent = new Intent().setClass(this, ViewReviewDetailsActivity.class);
+	    intent.putExtra("com.onesadjam.yagrac.ReviewId", _ReviewId);
+	    intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
+	    spec = tabs.newTabSpec("Review").setIndicator("Review").setContent(intent);
+	    tabs.addTab(spec);
+
+	    intent = new Intent().setClass(this, ViewReviewCommentsActivity.class);
+	    intent.putExtra("com.onesadjam.yagrac.ReviewId", _ReviewId);
+	    intent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
+	    spec = tabs.newTabSpec("Comments").setIndicator("Comments").setContent(intent);
+	    tabs.addTab(spec);
+
+	    tabs.setCurrentTab(0);
+	}
 }

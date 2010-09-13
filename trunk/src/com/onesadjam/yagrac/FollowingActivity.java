@@ -134,6 +134,7 @@ public class FollowingActivity extends Activity implements ILastItemRequestedLis
     			{
     				_ContactAdapter.AddContact(following.get_Following().get(i));
     			}
+    			_ContactAdapter.notifyDataSetChanged();
     			_ItemsLoaded = following.get_End();
     			_LoadingNextPage = false;
     		}
