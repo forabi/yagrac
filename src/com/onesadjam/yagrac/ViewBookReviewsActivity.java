@@ -24,14 +24,19 @@ package com.onesadjam.yagrac;
 
 import com.onesadjam.yagrac.xml.Book;
 import com.onesadjam.yagrac.xml.ResponseParser;
+import com.onesadjam.yagrac.xml.Review;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class ViewBookReviewsActivity extends Activity
 {
+	private String _AuthenticatedUserId;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -43,6 +48,7 @@ public class ViewBookReviewsActivity extends Activity
 		
 		Intent launchingIntent = this.getIntent();
 		String bookId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.BookId");
+		_AuthenticatedUserId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
 
 		try
 		{
@@ -54,6 +60,19 @@ public class ViewBookReviewsActivity extends Activity
 			}
 			
 			listview.setAdapter(reviewAdapter);
+			
+			listview.setOnItemClickListener(new AdapterView.OnItemClickListener()
+			{
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+				{
+					Review clickedReview = (Review)arg0.getAdapter().getItem(arg2);
+					Intent viewReviewIntent = new Intent(arg1.getContext(), ViewReviewActivity.class);
+					viewReviewIntent.putExtra("com.onesadjam.yagrac.ReviewId", clickedReview.get_Id());
+					viewReviewIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
+					arg1.getContext().startActivity(viewReviewIntent);				
+				}
+			});
 		}
 		catch (Exception e)
 		{

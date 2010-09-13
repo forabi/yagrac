@@ -47,6 +47,7 @@ import org.xml.sax.SAXException;
 import android.net.Uri;
 import android.sax.RootElement;
 import android.util.Xml;
+import android.widget.Toast;
 
 public class ResponseParser
 {
@@ -134,19 +135,20 @@ public class ResponseParser
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme("http");
 		builder.authority("www.goodreads.com");
-		builder.path("review/show.xml");
+		builder.path("review/show/" + reviewId + ".xml");
 		builder.appendQueryParameter("key", _ConsumerKey);
-		builder.appendQueryParameter("id", reviewId);
-		HttpGet getBooksOnShelfRequest = new HttpGet(builder.build().toString());
+		builder.appendQueryParameter("page", Integer.toString(page));
+		HttpGet getReviewRequest = new HttpGet(builder.build().toString());
 		if (get_IsAuthenticated())
 		{
-			_Consumer.sign(getBooksOnShelfRequest);
+			_Consumer.sign(getReviewRequest);
 		}
 		
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response;
 
-		response = httpClient.execute(getBooksOnShelfRequest);
+		response = httpClient.execute(getReviewRequest);
+		
 		Response responseData = ResponseParser.parse(response.getEntity().getContent());
 		
 		return responseData.get_Review();

@@ -51,6 +51,7 @@ public class Review
 	private String _CommentsCount;
 	private List<String> _Shelves = new ArrayList<String>();
 	private User _User = new User();
+	private Comments _Comments = new Comments();
 	
 	public Review copy()
 	{
@@ -80,6 +81,8 @@ public class Review
 		}
 		reviewCopy.set_Shelves(shelvesCopy);
 		
+		reviewCopy.set_Comments(this.get_Comments().copy());
+		
 		return reviewCopy;
 	}
 	
@@ -102,6 +105,7 @@ public class Review
 		this.set_CommentsCount("");
 		this._Shelves.clear();
 		this._User.clear();
+		this._Comments.clear();
 	}
 	
 	public static Review appendSingletonListener(final Element parentElement, int depth)
@@ -276,6 +280,7 @@ public class Review
 		});
 		
 		review.set_User(User.appendSingletonListener(reviewElement, depth + 1));
+		review.set_Comments(Comments.appendSingletonListener(reviewElement, depth +1));
 	}
 	
 	public String get_Id()
@@ -419,5 +424,15 @@ public class Review
 	public String get_CommentsCount()
 	{
 		return _CommentsCount;
+	}
+
+	public Comments get_Comments()
+	{
+		return _Comments;
+	}
+
+	public void set_Comments(Comments _Comments)
+	{
+		this._Comments = _Comments;
 	}	
 }

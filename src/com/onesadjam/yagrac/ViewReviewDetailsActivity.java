@@ -22,9 +22,54 @@
 
 package com.onesadjam.yagrac;
 
+import java.net.URL;
+
+import com.onesadjam.yagrac.xml.ResponseParser;
+import com.onesadjam.yagrac.xml.Review;
+
 import android.app.Activity;
+import android.os.Bundle;
+import android.text.Html;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ImageView.ScaleType;
 
 public class ViewReviewDetailsActivity extends Activity
 {
+	private static final int BOOK_IMAGE_HEIGHT = 160;
+	private static final int BOOK_IMAGE_WIDTH = 120;
 
+	private String _ReviewId;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.viewreviewdetail);
+
+		_ReviewId = getIntent().getExtras().getString("com.onesadjam.yagrac.ReviewId");
+		
+		try
+		{
+			Review reviewDetails = ResponseParser.GetReview(_ReviewId);
+			ImageView bookImage = (ImageView)findViewById(R.id._ViewBookImage);
+			bookImage.setScaleType(ScaleType.FIT_CENTER);
+			bookImage.setMinimumHeight((int)(BOOK_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
+			bookImage.setMinimumWidth((int)(BOOK_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
+			LazyImageLoader.LazyLoadImageView(this, new URL(reviewDetails.get_Book().get_ImageUrl()), R.drawable.nocover, bookImage);
+			
+			StringBuilder sb = new StringBuilder();
+			
+			sb.append(reviewDetails.get_Body());
+			
+			TextView textView = (TextView)findViewById(R.id._ViewReview_ReviewDetails);
+			textView.setText(Html.fromHtml(sb.toString()));
+		}
+		catch (Exception e)
+		{
+			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+	}
 }
