@@ -128,7 +128,7 @@ public class ReviewAdapter extends BaseAdapter
 			
 			TextView text = new TextView(_Context);
 			text.setText(Html.fromHtml(review.get_Body()));
-			text.setMovementMethod(LinkMovementMethod.getInstance());
+//			text.setMovementMethod(LinkMovementMethod.getInstance());
 			bodyLayout.addView(text);
 			
 			text = new TextView(_Context);

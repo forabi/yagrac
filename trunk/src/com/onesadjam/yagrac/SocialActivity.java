@@ -29,6 +29,8 @@ import android.widget.TabHost;
 
 public class SocialActivity extends TabActivity
 {
+	private static final int TAB_HEIGHT = 33;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -63,5 +65,9 @@ public class SocialActivity extends TabActivity
 
 	    tabs.setCurrentTab(0);
 
+	    final TabHost tabHost = getTabHost();
+	    tabHost.getTabWidget().getChildAt(0).getLayoutParams().height = (int)(TAB_HEIGHT * HomeActivity.get_ScalingFactor()); 
+	    tabHost.getTabWidget().getChildAt(1).getLayoutParams().height = (int)(TAB_HEIGHT * HomeActivity.get_ScalingFactor()); 
+	    tabHost.getTabWidget().getChildAt(2).getLayoutParams().height = (int)(TAB_HEIGHT * HomeActivity.get_ScalingFactor()); 
 	}
 }

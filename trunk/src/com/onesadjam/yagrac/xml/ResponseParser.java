@@ -22,8 +22,10 @@
 
 package com.onesadjam.yagrac.xml;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,7 @@ import org.xml.sax.SAXException;
 
 import android.net.Uri;
 import android.sax.RootElement;
+import android.util.Log;
 import android.util.Xml;
 import android.widget.Toast;
 
@@ -121,8 +124,21 @@ public class ResponseParser
 
 		response = httpClient.execute(getBooksOnShelfRequest);
 		Response responseData = ResponseParser.parse(response.getEntity().getContent());
-		
-		return responseData.get_Reviews();
+		return responseData.get_Reviews();		
+//		InputStream is = response.getEntity().getContent();
+//		BufferedReader br = new BufferedReader(new InputStreamReader(is));
+//		StringBuilder sb = new StringBuilder();
+//		while (true)
+//		{
+//			String nextByte = br.readLine();
+//			if (nextByte == null)
+//			{
+//				break;
+//			}
+//			sb.append(nextByte);
+//			Log.e("response", nextByte);
+//		}
+//		throw new Exception(sb.toString());
 	}
 	
 	public static Review GetReview(String reviewId) throws Exception
