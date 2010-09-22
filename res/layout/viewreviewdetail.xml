@@ -29,6 +29,35 @@
 		android:orientation="vertical"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent">
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<ImageView
+				android:id="@+id/_ViewReview_ReviewerImageView"
+				android:layout_width="120dip"
+				android:layout_height="160dip"
+				android:scaleType="fitXY"
+				android:src="@drawable/nophoto_unisex"></ImageView>
+			<ImageView
+				android:id="@+id/_ViewReview_BookImageView"
+				android:layout_width="120dip"
+				android:layout_height="160dip"
+				android:scaleType="fitXY"
+				android:src="@drawable/nocover"></ImageView>
+		</LinearLayout>
+		<TextView
+			android:id="@+id/_ViewReview_ReviewTitle"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"></TextView>
+		<RatingBar
+			android:id="@+id/_ViewReview_Rating"
+			android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:isIndicator="true"
+	        android:numStars="5"
+	        android:stepSize="1"
+	        android:layout_margin="3dp"
+	        style="?android:attr/ratingBarStyleSmall"></RatingBar>
 		<TextView
 			android:id="@+id/_ViewReview_ReviewDetails"
 			android:layout_width="fill_parent"

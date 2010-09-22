@@ -38,6 +38,8 @@ public class ViewUserActivity extends TabActivity
 	private String _AuthenticatedUserId;
 	private final Context _Context = this;
 	
+	private static final int TAB_HEIGHT = 33;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -65,6 +67,10 @@ public class ViewUserActivity extends TabActivity
 	    tabs.addTab(spec);
 
 	    tabs.setCurrentTab(0);
+
+	    final TabHost tabHost = getTabHost();
+	    tabHost.getTabWidget().getChildAt(0).getLayoutParams().height = (int)(TAB_HEIGHT * HomeActivity.get_ScalingFactor()); 
+	    tabHost.getTabWidget().getChildAt(1).getLayoutParams().height = (int)(TAB_HEIGHT * HomeActivity.get_ScalingFactor()); 
 	}
 
 	@Override

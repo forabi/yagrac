@@ -32,6 +32,8 @@ public class ViewReviewActivity extends TabActivity
 	private String _ReviewId;
 	private String _AuthenticatedUserId;
 	
+	private static final int TAB_HEIGHT = 33;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -59,5 +61,9 @@ public class ViewReviewActivity extends TabActivity
 	    tabs.addTab(spec);
 
 	    tabs.setCurrentTab(0);
+
+	    final TabHost tabHost = getTabHost();
+	    tabHost.getTabWidget().getChildAt(0).getLayoutParams().height = (int)(TAB_HEIGHT * HomeActivity.get_ScalingFactor()); 
+	    tabHost.getTabWidget().getChildAt(1).getLayoutParams().height = (int)(TAB_HEIGHT * HomeActivity.get_ScalingFactor()); 
 	}
 }

@@ -29,6 +29,7 @@ import java.util.List;
 
 import com.onesadjam.yagrac.xml.Comment;
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -123,7 +124,7 @@ public class CommentListItemAdapter extends BaseAdapter
 		usernameText.setText(comment.get_User().get_Name());
 		
 		TextView bodyText = (TextView)commentItemView.findViewById(R.id._CommentListItem_Body);
-		bodyText.setText(comment.get_Body());
+		bodyText.setText(Html.fromHtml(comment.get_Body()));
 		
 		TextView timestampText = (TextView)commentItemView.findViewById(R.id._CommentListItem_Timestamp);
 		timestampText.setText(comment.get_UpdatedAt());

@@ -31,6 +31,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.Html;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
@@ -54,16 +55,27 @@ public class ViewReviewDetailsActivity extends Activity
 		try
 		{
 			Review reviewDetails = ResponseParser.GetReview(_ReviewId);
-			ImageView bookImage = (ImageView)findViewById(R.id._ViewBookImage);
+			
+			ImageView userImage = (ImageView)findViewById(R.id._ViewReview_ReviewerImageView);
+			userImage.setScaleType(ScaleType.FIT_CENTER);
+			userImage.setMinimumHeight((int)(BOOK_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
+			userImage.setMinimumWidth((int)(BOOK_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
+			LazyImageLoader.LazyLoadImageView(this, new URL(reviewDetails.get_User().get_ImageUrl()), R.drawable.nocover, userImage);
+
+			ImageView bookImage = (ImageView)findViewById(R.id._ViewReview_BookImageView);
 			bookImage.setScaleType(ScaleType.FIT_CENTER);
 			bookImage.setMinimumHeight((int)(BOOK_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
 			bookImage.setMinimumWidth((int)(BOOK_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
 			LazyImageLoader.LazyLoadImageView(this, new URL(reviewDetails.get_Book().get_ImageUrl()), R.drawable.nocover, bookImage);
+
+			RatingBar ratingBar = (RatingBar)findViewById(R.id._ViewReview_Rating);
+			ratingBar.setRating(reviewDetails.get_Rating());
+			
+			TextView reviewTitle = (TextView)findViewById(R.id._ViewReview_ReviewTitle);
+			reviewTitle.setText(reviewDetails.get_User().get_Name() + " reviews " + reviewDetails.get_Book().get_Title());
 			
 			StringBuilder sb = new StringBuilder();
-			
 			sb.append(reviewDetails.get_Body());
-			
 			TextView textView = (TextView)findViewById(R.id._ViewReview_ReviewDetails);
 			textView.setText(Html.fromHtml(sb.toString()));
 		}
