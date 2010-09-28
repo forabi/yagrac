@@ -31,7 +31,6 @@
 	<ImageView 
 		android:layout_width="wrap_content" 
 		android:src="@drawable/goodreads_logo" 
-		android:background="@drawable/gr_header_bg_wo_books_new" 
 		android:id="@+id/_SearchHeaderImageView" 
 		android:layout_height="wrap_content">
 	</ImageView>
