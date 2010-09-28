@@ -39,6 +39,7 @@ public class Response
 	private Book _Book;
 	private Author _Author;
 	private Comments _Comments;
+	private List<Event> _Events = new ArrayList<Event>();
 	private List<Update> _Updates = new ArrayList<Update>();
 	
 	public void clear()
@@ -56,6 +57,7 @@ public class Response
 		this.get_Book().clear();
 		this.get_Author().clear();
 		this.get_Comments().clear();
+		this.get_Events().clear();
 	}
 	
 	public void copy()
@@ -81,7 +83,14 @@ public class Response
 			updates.add(this.get_Updates().get(i));
 		}
 		responseCopy.set_Updates(updates);
-	}
+
+		List<Event> events = new ArrayList<Event>();
+		for (int i = 0; i < this.get_Events().size(); i++)
+		{
+			events.add(this.get_Events().get(i));
+		}
+		responseCopy.set_Events(events);
+}
 	
 	public Request get_Request()
 	{
@@ -211,5 +220,15 @@ public class Response
 	public Comments get_Comments()
 	{
 		return _Comments;
+	}
+
+	public void set_Events(List<Event> _Events)
+	{
+		this._Events = _Events;
+	}
+
+	public List<Event> get_Events()
+	{
+		return _Events;
 	}
 }

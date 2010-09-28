@@ -31,7 +31,6 @@
 		android:id="@+id/_ViewShelfHeaderImageView" 
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content" 
-		android:background="@drawable/gr_header_bg_wo_books_new" 
 		android:src="@drawable/goodreads_logo">
 	</ImageView>
 	<Spinner 

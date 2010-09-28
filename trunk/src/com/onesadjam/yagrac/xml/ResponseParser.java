@@ -22,10 +22,8 @@
 
 package com.onesadjam.yagrac.xml;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,11 +44,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.xml.sax.SAXException;
 
+import android.location.Location;
 import android.net.Uri;
 import android.sax.RootElement;
-import android.util.Log;
 import android.util.Xml;
-import android.widget.Toast;
 
 public class ResponseParser
 {
@@ -79,6 +76,7 @@ public class ResponseParser
 		response.set_Review(Review.appendSingletonListener(root, 0));
 		response.set_Author(Author.appendSingletonListener(root, 0));
 		response.set_Comments(Comments.appendSingletonListener(root, 0));
+		response.set_Events(Event.appendArrayListener(root, 0));
 		
 		Xml.parse(inputStream, Xml.Encoding.UTF_8, root.getContentHandler());
 
@@ -591,8 +589,12 @@ public class ResponseParser
 		builder.appendQueryParameter("page", Integer.toString(page));
 
 		HttpClient httpClient = new DefaultHttpClient();
-		HttpGet getResponse = new HttpGet(builder.build().toString());
-		HttpResponse response = httpClient.execute(getResponse);
+		HttpGet getRequest = new HttpGet(builder.build().toString());
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getRequest);
+		}
+		HttpResponse response = httpClient.execute(getRequest);
 		
 		Response responseData = ResponseParser.parse(response.getEntity().getContent());
 		
@@ -620,6 +622,50 @@ public class ResponseParser
 		Response responseData = ResponseParser.parse(response.getEntity().getContent());
 		
 		return responseData.get_Author();
+	}
+
+	public static List<Event> GetNearbyEvents(Location location) throws Exception
+	{
+		Uri.Builder builder = new Uri.Builder();
+		builder.scheme("http");
+		builder.authority("www.goodreads.com");
+		builder.path("event/index.xml");
+		builder.appendQueryParameter("key", _ConsumerKey);
+		builder.appendQueryParameter("lat", Double.toString(location.getLatitude()));
+		builder.appendQueryParameter("lng", Double.toString(location.getLongitude()));
+
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpGet getRequest = new HttpGet(builder.build().toString());
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getRequest);
+		}
+		HttpResponse response = httpClient.execute(getRequest);
+		
+		Response responseData = ResponseParser.parse(response.getEntity().getContent());
+		
+		return responseData.get_Events();
+	}
+
+	public static List<Event> GetEvents() throws Exception
+	{
+		Uri.Builder builder = new Uri.Builder();
+		builder.scheme("http");
+		builder.authority("www.goodreads.com");
+		builder.path("event/index.xml");
+		builder.appendQueryParameter("key", _ConsumerKey);
+
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpGet getRequest = new HttpGet(builder.build().toString());
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getRequest);
+		}
+		HttpResponse response = httpClient.execute(getRequest);
+		
+		Response responseData = ResponseParser.parse(response.getEntity().getContent());
+		
+		return responseData.get_Events();
 	}
 
 	private static void set_IsAuthenticated(boolean _IsAuthenticated)

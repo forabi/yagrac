@@ -32,7 +32,6 @@
 		android:id="@+id/_HomeHeaderImageView" 
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
-		android:background="@drawable/gr_header_bg_wo_books_new" 
 		android:src="@drawable/goodreads_logo">
 	</ImageView>
 	<Button 
@@ -58,6 +57,12 @@
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
 		android:text="Friends">
+	</Button>
+	<Button 
+		android:id="@+id/_Home_EventsButton" 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:text="Events">
 	</Button>
 	<RelativeLayout
 		android:layout_width="fill_parent"

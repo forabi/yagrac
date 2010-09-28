@@ -114,6 +114,18 @@ public class HomeActivity extends Activity
 			}
 		});
 
+		Button eventsButton = (Button)findViewById(R.id._Home_EventsButton);
+		eventsButton.setOnClickListener( new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				Intent eventsIntent = new Intent(v.getContext(), EventsActivity.class);
+				eventsIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", get_UserId());
+				v.getContext().startActivity(eventsIntent);
+			}
+		});
+
 		boolean isAuthenticated = false;
 		
 		if ( token == "" || token == null )

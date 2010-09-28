@@ -67,6 +67,7 @@
 		<activity android:label="@string/app_name" android:name=".ViewReviewActivity"></activity>
 		<activity android:label="@string/app_name" android:name=".ViewReviewDetailsActivity"></activity>
 		<activity android:label="@string/app_name" android:name=".ViewReviewCommentsActivity"></activity>
+		<activity android:label="@string/app_name" android:name=".EventsActivity"></activity>
 		<!-- Track Market installs from AdMob ads -->		
 		<receiver android:name="com.admob.android.ads.analytics.InstallReceiver" android:exported="true">
 			<intent-filter>
@@ -75,7 +76,7 @@
 		</receiver>
 		<meta-data android:value="a14c77dda100acf" android:name="ADMOB_PUBLISHER_ID" />
 	</application>
-    <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="4" />
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 	<supports-screens 
 		android:smallScreens="true"
