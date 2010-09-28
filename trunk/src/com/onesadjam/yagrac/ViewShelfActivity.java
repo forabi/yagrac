@@ -31,14 +31,15 @@ import com.onesadjam.yagrac.xml.UserShelf;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,11 +52,12 @@ public class ViewShelfActivity extends Activity
 	private BookImageAdapter _BookGalleryAdapter;
 	private Review _SelectedReview;
 	private Context _Context;
-	private int _ReviewsOnCurrentShelf;
-	private int _ReviewsLoaded;
-	private int _ReviewsPerPage;
+	private int _ReviewsOnCurrentShelf = 0;
+	private int _ReviewsLoaded = 0;
+	private int _ReviewsPerPage = 0;
 	private String _CurrentShelfName;
 	private boolean _LoadingNextPage = false;
+	private ProgressDialog _BusySpinner;
 	
 	private static final int PICK_SHELVES_DIALOG = 1;
 	
@@ -67,14 +69,96 @@ public class ViewShelfActivity extends Activity
 		
 		setContentView(R.layout.viewshelflayout);
 		
-		Spinner shelfSpinner = (Spinner)findViewById(R.id._ShelfSpinner);
 		_Context = this;
 		
 		Gallery bookGallery = (Gallery)findViewById(R.id._ViewShelfBookGallery);
 		_BookGalleryAdapter = new BookImageAdapter(this);
 		bookGallery.setAdapter(_BookGalleryAdapter);
 		
-		// Get the user ID
+		_BookGalleryAdapter.setLastItemRequestedListener(new ILastItemRequestedListener()
+		{
+			@Override
+			public synchronized void onLastItemRequest(Object source, int requestedIndex)
+			{
+				if (_LoadingNextPage) return;
+				_LoadingNextPage = true;
+				final Handler ReviewLoadedHandler = new Handler() 
+				{
+		    		@Override
+		    		public void handleMessage(Message message) 
+		    		{
+		    			Reviews reviews = (Reviews)message.obj;
+		    			for (int i = 0; i < reviews.get_Reviews().size(); i++)
+		    			{
+		    				_BookGalleryAdapter.AddBook(reviews.get_Reviews().get(i));
+		    			}
+		    			_ReviewsLoaded = reviews.get_End();
+		    			_LoadingNextPage = false;
+		    		}
+		    	};
+		    	
+		    	Thread thread = new Thread()
+		    	{
+		    		@Override
+		    		public void run() 
+		    		{
+						try
+						{
+							if (_ReviewsLoaded < _ReviewsOnCurrentShelf)
+							{
+								Reviews reviews = ResponseParser.GetBooksOnShelf(_CurrentShelfName, _UserId, (_ReviewsLoaded / _ReviewsPerPage) + 1);
+								Message message = ReviewLoadedHandler.obtainMessage(1, reviews);
+								ReviewLoadedHandler.sendMessage(message);
+							}
+						}
+						catch (Exception e)
+						{
+							_LoadingNextPage = false;
+							e.printStackTrace();
+						}
+		    		}
+		    	};
+		    	thread.start();
+			}
+		});
+		
+		bookGallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+		{
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+			{
+				set_SelectedReview((Review)_BookGalleryAdapter.getItem(arg2));
+				
+				RatingBar bookRating = (RatingBar)findViewById(R.id._ViewShelfRatingBar);
+				bookRating.setRating(_SelectedReview.get_Rating());
+				bookRating.setVisibility(_SelectedReview.get_Rating() == 0 ? View.GONE : View.VISIBLE);
+
+				TextView bookDetails = (TextView)findViewById(R.id._ViewShelfBookDetailsTextView);
+				bookDetails.setVisibility(View.VISIBLE);
+				
+				StringBuilder sb = new StringBuilder();
+				sb.append(_SelectedReview.get_Book().get_Title() + "<br />By:<br />");
+				for (int i = 0; i < _SelectedReview.get_Book().get_Authors().size(); i++)
+				{
+					sb.append("&nbsp;&nbsp;&nbsp;&nbsp;" + _SelectedReview.get_Book().get_Authors().get(i).get_Name() + "<br />");
+				}
+				sb.append("<br /><b>User's Review</b><br />" + _SelectedReview.get_Body());
+				sb.append("<br /><br /><b>Description</b><br />" + _SelectedReview.get_Book().get_Description());
+				
+				bookDetails.setText(Html.fromHtml(sb.toString()));
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) 
+			{
+				TextView bookDetails = (TextView)findViewById(R.id._ViewShelfBookDetailsTextView);
+				bookDetails.setVisibility(View.INVISIBLE);
+				RatingBar bookRating = (RatingBar)findViewById(R.id._ViewShelfRatingBar);
+				bookRating.setVisibility(View.INVISIBLE);
+			}
+			
+		});
+
 		try
 		{
 			// Request the list of shelves for the user.
@@ -82,137 +166,9 @@ public class ViewShelfActivity extends Activity
 			
 			_UserId = launchingIntent.getExtras().getString("com.onesadjam.yagrac.UserId");
 			_AuthenticatedUserId = getIntent().getExtras().getString("com.onesadjam.yagrac.AuthenticatedUserId");
-			ArrayAdapter<String> shelfSpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-			shelfSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			shelfSpinner.setAdapter(shelfSpinnerAdapter);
 			
-			List<UserShelf> userShelves = ResponseParser.GetShelvesForUser(_UserId);
-			
-			for (int i = 0; i < userShelves.size(); i++)
-			{
-				shelfSpinnerAdapter.add(userShelves.get(i).get_Name());
-			}
-			
-			shelfSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-			{
-				@Override
-				public void onItemSelected(AdapterView<?> parentView, android.view.View selectedItemView, int position, long id)
-				{
-					loadShelf(parentView.getItemAtPosition(position).toString());
-				}
-				
-				@Override
-				public void onNothingSelected(AdapterView<?> parentview) {}
-			});
-		}
-		catch (Exception e)
-		{
-			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
-	
-	private void loadShelf(String shelfName)
-	{
-		try
-		{
-			_CurrentShelfName = shelfName;
-			Reviews reviewsForShelf = ResponseParser.GetBooksOnShelf(shelfName, _UserId);
-			_ReviewsOnCurrentShelf = reviewsForShelf.get_Total();
-			_ReviewsLoaded = reviewsForShelf.get_End();
-			_ReviewsPerPage = reviewsForShelf.get_End();
-			List<Review> reviews = reviewsForShelf.get_Reviews();
-			_BookGalleryAdapter.clear();
-			for (int i = 0; i < reviews.size(); i++)
-			{
-				_BookGalleryAdapter.AddBook(reviews.get(i));
-			}
-			Gallery bookGallery = (Gallery)findViewById(R.id._ViewShelfBookGallery);
-			bookGallery.setAdapter(_BookGalleryAdapter);
-			
-			bookGallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-			{
-				@Override
-				public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
-				{
-					set_SelectedReview((Review)_BookGalleryAdapter.getItem(arg2));
-					
-					RatingBar bookRating = (RatingBar)findViewById(R.id._ViewShelfRatingBar);
-					bookRating.setRating(_SelectedReview.get_Rating());
-					bookRating.setVisibility(_SelectedReview.get_Rating() == 0 ? View.GONE : View.VISIBLE);
-
-					TextView bookDetails = (TextView)findViewById(R.id._ViewShelfBookDetailsTextView);
-					bookDetails.setVisibility(View.VISIBLE);
-					
-					StringBuilder sb = new StringBuilder();
-					sb.append(_SelectedReview.get_Book().get_Title() + "<br />By:<br />");
-					for (int i = 0; i < _SelectedReview.get_Book().get_Authors().size(); i++)
-					{
-						sb.append("&nbsp;&nbsp;&nbsp;&nbsp;" + _SelectedReview.get_Book().get_Authors().get(i).get_Name() + "<br />");
-					}
-					sb.append("<br /><b>User's Review</b><br />" + _SelectedReview.get_Body());
-					sb.append("<br /><br /><b>Description</b><br />" + _SelectedReview.get_Book().get_Description());
-					
-					bookDetails.setText(Html.fromHtml(sb.toString()));
-					
-					if (
-							_ReviewsOnCurrentShelf != _ReviewsLoaded &&
-							arg2 == _ReviewsLoaded - 2 && 
-							_ReviewsLoaded < _ReviewsOnCurrentShelf && 
-							!_LoadingNextPage)
-					{
-						_LoadingNextPage = true;
-						LoadNextPageOfBooks();
-					}
-				}
-
-				private void LoadNextPageOfBooks()
-				{
-					final Handler ReviewLoadedHandler = new Handler() 
-					{
-			    		@Override
-			    		public void handleMessage(Message message) 
-			    		{
-			    			Reviews reviews = (Reviews)message.obj;
-			    			for (int i = 0; i < reviews.get_Reviews().size(); i++)
-			    			{
-			    				_BookGalleryAdapter.AddBook(reviews.get_Reviews().get(i));
-			    			}
-			    			_ReviewsLoaded = reviews.get_End();
-			    			_LoadingNextPage = false;
-			    		}
-			    	};
-			    	
-			    	Thread thread = new Thread()
-			    	{
-			    		@Override
-			    		public void run() 
-			    		{
-							try
-							{
-								Reviews reviews = ResponseParser.GetBooksOnShelf(_CurrentShelfName, _UserId, (_ReviewsLoaded / _ReviewsPerPage) + 1);
-								Message message = ReviewLoadedHandler.obtainMessage(1, reviews);
-								ReviewLoadedHandler.sendMessage(message);	
-							}
-							catch (Exception e)
-							{
-								_LoadingNextPage = false;
-								e.printStackTrace();
-							}
-			    		}
-			    	};
-			    	thread.start();
-				}
-
-				@Override
-				public void onNothingSelected(AdapterView<?> arg0) 
-				{
-					TextView bookDetails = (TextView)findViewById(R.id._ViewShelfBookDetailsTextView);
-					bookDetails.setVisibility(View.INVISIBLE);
-					RatingBar bookRating = (RatingBar)findViewById(R.id._ViewShelfRatingBar);
-					bookRating.setVisibility(View.INVISIBLE);
-				}
-				
-			});
+			_BusySpinner = ProgressDialog.show(this, "", "Loading user shelves...");
+			new LoadShelvesActivity().execute(_UserId);
 		}
 		catch (Exception e)
 		{
@@ -314,5 +270,108 @@ public class ViewShelfActivity extends Activity
 	public Review get_SelectedReview()
 	{
 		return _SelectedReview;
+	}
+	
+	private class LoadShelfActivity extends AsyncTask<String, Void, Reviews>
+	{
+		@Override
+		protected Reviews doInBackground(String... params)
+		{
+			Reviews booksOnShelf = null;
+			try
+			{
+				String userId = params[0];
+				String shelfName = params[1];
+				_CurrentShelfName = shelfName;
+				booksOnShelf = ResponseParser.GetBooksOnShelf(shelfName, userId);
+			}
+			catch (Exception e){}
+			return booksOnShelf;
+		}
+
+		@Override
+		protected void onPostExecute(Reviews result)
+		{
+			if (result == null)
+			{
+				Toast.makeText(_Context, "Unable to retrieve books on shelf.", Toast.LENGTH_LONG);
+			}
+			else
+			{
+				try
+				{
+					_ReviewsOnCurrentShelf = result.get_Total();
+					_ReviewsLoaded = result.get_End();
+					_ReviewsPerPage = result.get_End();
+					List<Review> reviews = result.get_Reviews();
+					_BookGalleryAdapter.clear();
+					for (int i = 0; i < reviews.size(); i++)
+					{
+						_BookGalleryAdapter.AddBook(reviews.get(i));
+					}
+					_BookGalleryAdapter.notifyDataSetChanged();
+				}
+				catch (Exception e)
+				{
+					Toast.makeText(_Context, e.getMessage(), Toast.LENGTH_LONG).show();
+				}
+			}
+			_BusySpinner.dismiss();
+		}
+	}
+	
+	private class LoadShelvesActivity extends AsyncTask<String, Void, List<UserShelf>>
+	{
+		@Override
+		protected List<UserShelf> doInBackground(String... params)
+		{
+			try
+			{
+				if (params.length >= 1 )
+				{
+					return ResponseParser.GetShelvesForUser(params[0]);
+				}
+			}
+			catch (Exception e)
+			{
+			};
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(List<UserShelf> result)
+		{
+			ArrayAdapter<String> shelfSpinnerAdapter = new ArrayAdapter<String>(_Context, android.R.layout.simple_spinner_item);
+			shelfSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			Spinner shelfSpinner = (Spinner)findViewById(R.id._ShelfSpinner);
+			shelfSpinner.setAdapter(shelfSpinnerAdapter);
+			
+			List<UserShelf> userShelves = result;
+			_BusySpinner.dismiss();
+			if (result == null)
+			{
+				Toast.makeText(_Context, "Error loading user shelves.", Toast.LENGTH_LONG);
+				return;
+			}
+			
+			for (int i = 0; i < userShelves.size(); i++)
+			{
+				shelfSpinnerAdapter.add(userShelves.get(i).get_Name());
+			}
+			
+			shelfSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+			{
+				@Override
+				public void onItemSelected(AdapterView<?> parentView, android.view.View selectedItemView, int position, long id)
+				{
+					String shelfName = parentView.getItemAtPosition(position).toString();
+					_BusySpinner = ProgressDialog.show(_Context, "", "Loading books on " + shelfName + " shelf...");
+					new LoadShelfActivity().execute(_UserId, parentView.getItemAtPosition(position).toString());
+				}
+				
+				@Override
+				public void onNothingSelected(AdapterView<?> parentview) {}
+			});
+		}
 	}
 }

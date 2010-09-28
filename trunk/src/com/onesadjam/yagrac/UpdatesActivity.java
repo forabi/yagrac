@@ -28,8 +28,10 @@ import com.onesadjam.yagrac.xml.ResponseParser;
 import com.onesadjam.yagrac.xml.Update;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,14 +41,19 @@ import android.widget.Toast;
 public class UpdatesActivity extends Activity
 {
 	private String _UserId;
+	private ProgressDialog _BusySpinner;
+	private Context _Context;
+	private ListView _UpdatesList;
 	
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.updates);
+		
+		_Context = this;
 
-		ListView updatesList = (ListView)findViewById(R.id._UpdatesListView);
+		_UpdatesList = (ListView)findViewById(R.id._UpdatesListView);
 		
 		if (!ResponseParser.get_IsAuthenticated())
 		{
@@ -56,34 +63,15 @@ public class UpdatesActivity extends Activity
 		
 		_UserId = getIntent().getExtras().getString("com.onesadjam.yagrac.UserId");
 
-		try
-		{	
-			// TODO: The retrieval and parsing of updates takes a while.
-			// TODO: kick this off to another thread and put up some sort of busy
-			// TODO: indicator to the user to let them know what is going on.
-			UpdateItemAdapter updateItemAdapter = new UpdateItemAdapter(this);
-			List<Update> updates = ResponseParser.GetFriendsUpdates();
-			
-			for (int i = 0; i < updates.size(); i++ )
-			{
-				updateItemAdapter.add(updates.get(i));
-			}
-			updatesList.setAdapter(updateItemAdapter);
-			
-//			InputStream responseContent = response.getEntity().getContent();
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(responseContent));
-//			StringBuilder sb = new StringBuilder();
-//			String nextLine = null;
-//			while ((nextLine = reader.readLine()) != null)
-//			{
-//				sb.append(nextLine + "\n");
-//			}
-//			String fullResponse = sb.toString();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		_BusySpinner = ProgressDialog.show(this, "", "Loading updates...");
+		
+		new LoadUpdatesTask().execute();
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
 	}
 
 	@Override
@@ -103,5 +91,39 @@ public class UpdatesActivity extends Activity
 			}
 		});
 		return true;
+	}
+	
+	private class LoadUpdatesTask extends AsyncTask<Void, Void, List<Update>>
+	{
+		@Override
+		protected List<Update> doInBackground(Void... params)
+		{
+			List<Update> updates = null;
+			try
+			{
+				updates = ResponseParser.GetFriendsUpdates();
+			}
+			catch (Exception e){}
+			return updates;
+		}
+
+		@Override
+		protected void onPostExecute(List<Update> result)
+		{
+			if (result == null)
+			{
+				Toast.makeText(_Context, "Unable to retrieve updates.", Toast.LENGTH_LONG);
+			}
+			else
+			{
+				UpdateItemAdapter updateItemAdapter = new UpdateItemAdapter(_Context);
+				for (int i = 0; i < result.size(); i++ )
+				{
+					updateItemAdapter.add(result.get(i));
+				}
+				_UpdatesList.setAdapter(updateItemAdapter);
+			}
+			_BusySpinner.dismiss();
+		}
 	}
 }
