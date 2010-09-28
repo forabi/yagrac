@@ -44,6 +44,7 @@ public class BookImageAdapter extends BaseAdapter
 
 	private List<Review> _Reviews = new ArrayList<Review>();
 	private Context _Context;
+	private ILastItemRequestedListener _LastItemRequestedListener = null;
 	
 	public BookImageAdapter(Context c)
 	{
@@ -94,12 +95,22 @@ public class BookImageAdapter extends BaseAdapter
 					new URL(_Reviews.get(position).get_Book().get_SmallImageUrl()), 
 					R.drawable.nocover,
 					bookImage);
+
+			if (position == _Reviews.size() - 1 && _LastItemRequestedListener != null)
+			{
+				_LastItemRequestedListener.onLastItemRequest(this, position);
+			}
 		}
 		catch (MalformedURLException e)
 		{
 			Toast.makeText(_Context, e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 		return bookImage;
+	}
+	
+	public void setLastItemRequestedListener(ILastItemRequestedListener lastItemRequestedListener)
+	{
+		_LastItemRequestedListener = lastItemRequestedListener;
 	}
 }
 
