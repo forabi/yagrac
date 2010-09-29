@@ -36,20 +36,50 @@
 		android:orientation="vertical"
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content">
-		<TextView
-			android:id="@+id/_EventItem_EventDateTime"
+		<TableLayout
 			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"></TextView>
-		<TextView
-			android:id="@+id/_EventItem_Title"
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"></TextView>
+			android:layout_width="wrap_content"
+			android:stretchColumns="1">
+			<TableRow>
+				<TextView
+					android:text="Title"
+					android:textStyle="bold"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"></TextView>
+				<TextView
+					android:id="@+id/_EventItem_Title"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"></TextView>
+			</TableRow>
+			<TableRow>
+				<TextView
+					android:text="When"
+					android:textStyle="bold"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"></TextView>
+				<TextView
+					android:id="@+id/_EventItem_EventDateTime"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"></TextView>
+			</TableRow>
+			<TableRow>
+				<TextView
+					android:text="Venue"
+					android:textStyle="bold"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"></TextView>
+				<TextView
+					android:id="@+id/_EventItem_Venue"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"></TextView>
+			</TableRow>
+		</TableLayout>
 		<TextView
 			android:id="@+id/_EventItem_Description"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"></TextView>
 		<TextView
-			android:id="@+id/_EventItem_Venue"
+			android:id="@+id/_EventItem_Address"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"></TextView>
 	</LinearLayout>
