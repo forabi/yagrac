@@ -52,7 +52,7 @@
 		android:layout_height="0px"
 		android:layout_weight="1">
 	</ListView>
-			<com.admob.android.ads.AdView
+	<com.admob.android.ads.AdView
 			android:id="@+id/_HomeAd"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
@@ -60,6 +60,5 @@
 			goodreads:backgroundColor="#000000"
 			goodreads:primaryTextColor="#FFFFFF"
 			goodreads:secondaryTextColor="#CCCCCC"
-			goodreads:keywords="book"
-		/>
+			goodreads:keywords="book" />
 </LinearLayout>

@@ -24,6 +24,9 @@ package com.onesadjam.yagrac;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import com.onesadjam.yagrac.xml.Event;
@@ -32,9 +35,15 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -49,6 +58,10 @@ public class EventsActivity extends Activity
 	private Context _Context;
 	private ProgressDialog _BusySpinner;
 	private ArrayAdapter<Event> _Adapter;
+	private Location _LatestLocation = null;
+	private LocationManager _LocationManager = null;
+	private LocationListener _LocationListener = null;
+	private static final SimpleDateFormat _GoodreadsDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -96,18 +109,32 @@ public class EventsActivity extends Activity
 						e.printStackTrace();
 					}
 				}
-				
+
+				String formattedDate = "";
+				try
+				{
+					Date timestamp = _GoodreadsDateFormat.parse(event.get_EventAt());
+					formattedDate = timestamp.toLocaleString();
+				}
+				catch (ParseException e)
+				{
+					formattedDate = event.get_EventAt();
+				}
 				TextView text = (TextView)eventItem.findViewById(R.id._EventItem_EventDateTime);
-				text.setText(event.get_EventAt());
+				text.setText(formattedDate);
 				
 				text = (TextView)eventItem.findViewById(R.id._EventItem_Title);
 				text.setText(event.get_Title());
 
 				text = (TextView)eventItem.findViewById(R.id._EventItem_Description);
-				text.setText(event.get_Description());
+				text.setMovementMethod(LinkMovementMethod.getInstance());
+				text.setText(Html.fromHtml(event.get_Description()));
 
 				text = (TextView)eventItem.findViewById(R.id._EventItem_Venue);
 				text.setText(event.get_Venue());
+
+				text = (TextView)eventItem.findViewById(R.id._EventItem_Address);
+				text.setText(event.get_City() + ", " + event.get_StateCode() + ", " +event.get_CountryCode());
 
 				return eventItem;
 			}
@@ -124,19 +151,17 @@ public class EventsActivity extends Activity
 		@Override
 		protected Location doInBackground(Void... params)
 		{
-			return null;
+			return _LatestLocation;
 		}
 
 		@Override
 		protected void onPostExecute(Location result)
 		{
 			_BusySpinner.dismiss();
-//			if (result == null)
-//			{
-//				Toast.makeText(_Context, "Unable to retrieve location.", Toast.LENGTH_LONG);
-//				return;
-//			}
-
+			if (result == null)
+			{
+				Toast.makeText(_Context, "Unable to retrieve location. Loading default event list.", Toast.LENGTH_LONG);
+			}
 			_BusySpinner = ProgressDialog.show(_Context, "", "Loading events...");
 			
 			new LoadEventsTask().execute(result);
@@ -150,8 +175,15 @@ public class EventsActivity extends Activity
 		{
 			try
 			{
-				return ResponseParser.GetEvents();
-//				return ResponseParser.GetNearbyEvents(params[0]);
+				if (params.length > 0 && params[0] != null)
+				{
+					Location latestLocation = params[0];
+					return ResponseParser.GetNearbyEvents(latestLocation);
+				}
+				else
+				{
+					return ResponseParser.GetEvents();
+				}
 			}
 			catch (Exception e)
 			{
@@ -176,5 +208,64 @@ public class EventsActivity extends Activity
 			}
 			_Adapter.notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		
+		_LocationManager.removeUpdates(_LocationListener);
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		
+		_LocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		
+		_LatestLocation = _LocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+		_LocationListener = new LocationListener() 
+		{
+			@Override
+		    public void onLocationChanged(Location location) 
+		    {
+				_LatestLocation = location;
+		    }
+
+			@Override
+		    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+			@Override
+		    public void onProviderEnabled(String provider) {}
+
+			@Override
+		    public void onProviderDisabled(String provider) {}
+		  };
+
+		_LocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, _LocationListener);		
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.eventsmenu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id._Events_RefreshMenuItem:
+				_BusySpinner = ProgressDialog.show(this, "", "Acquiring location...");
+				new AcquireLocationTask().execute();
+				return true;
+		}
+
+		return super.onOptionsItemSelected(item);
 	}
 }
