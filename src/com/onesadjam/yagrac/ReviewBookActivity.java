@@ -71,26 +71,33 @@ public class ReviewBookActivity extends Activity
 
 		ImageView bookImage = (ImageView) findViewById(R.id._ReviewBook_BookImage);
 		
+		Calendar currentDate = Calendar.getInstance();
+		TextView textView = (TextView)findViewById(R.id._ReviewBook_DateRead);
+		_DateRead = String.format("%04d-%02d-%02d", 
+				currentDate.get(Calendar.YEAR), 
+				currentDate.get(Calendar.MONTH)+1,
+				currentDate.get(Calendar.DAY_OF_MONTH));
+		textView.setText("Date Read:\t" + _DateRead);
+		
+		textView = (TextView)findViewById(R.id._ReviewBook_Shelves);
+		textView.setText("Shelves:\tread");
+		_Shelves.add("read");
+
 		try
 		{
-			Calendar currentDate = Calendar.getInstance();
-			TextView textView = (TextView)findViewById(R.id._ReviewBook_DateRead);
-			_DateRead = String.format("%04d-%02d-%02d", 
-					currentDate.get(Calendar.YEAR), 
-					currentDate.get(Calendar.MONTH)+1,
-					currentDate.get(Calendar.DAY_OF_MONTH));
-			textView.setText("Date Read:\t" + _DateRead);
-			
-			textView = (TextView)findViewById(R.id._ReviewBook_Shelves);
-			textView.setText("Shelves:\tread");
-			_Shelves.add("read");
-
 			Book bookReviews = ResponseParser.GetReviewsForBook(_BookId);
 			bookImage.setScaleType(ScaleType.FIT_CENTER);
 			bookImage.setMinimumHeight((int)(BOOK_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
 			bookImage.setMinimumWidth((int)(BOOK_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
 			LazyImageLoader.LazyLoadImageView(this, new URL(bookReviews.get_ImageUrl()), R.drawable.nocover, bookImage);
-
+		}
+		catch (Exception e)
+		{
+			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+		
+		try
+		{
 			User userDetails = ResponseParser.GetUserDetails(_AuthenticatedUserId);
 			
 			List<UserShelf> shelves = userDetails.get_Shelves();
@@ -100,61 +107,61 @@ public class ReviewBookActivity extends Activity
 			{
 				adapter.AddShelf(shelves.get(i).get_Name());
 			}
-			
-			Button button = (Button)findViewById(R.id._ReviewBook_DatePickerButton);
-			button.setOnClickListener(new View.OnClickListener() 
-	        {
-	            public void onClick(View v) 
-	            {
-	                showDialog(DATE_DIALOG_ID);
-	            }
-	        });	
-			
-			button = (Button)findViewById(R.id._ReviewBook_PickShelvesButton);
-			button.setOnClickListener(new View.OnClickListener()
-			{
-				@Override
-				public void onClick(View v)
-				{
-					showDialog(PICK_SHELVES_DIALOG);
-				}
-			});
-			
-			button = (Button)findViewById(R.id._ReviewBook_SubmitButton);
-			button.setOnClickListener(new View.OnClickListener()
-			{
-				@Override
-				public void onClick(View v)
-				{
-					try
-					{
-						TextView textView = (TextView)findViewById(R.id._ReviewBook_Review);
-						String review = textView.getText().toString();
-						RatingBar ratingBar = (RatingBar)findViewById(R.id._ReviewBook_Rating);
-						int rating = (int)ratingBar.getRating();
-						
-						if (_ReviewId != null && !_ReviewId.equalsIgnoreCase(""))
-						{
-							ResponseParser.UpdateReview(_ReviewId, review, _DateRead, _Shelves, rating);
-						}
-						else
-						{
-							ResponseParser.PostReview(_BookId, review, _DateRead, _Shelves, rating);
-						}
-						Toast.makeText(v.getContext(), "Review submitted", Toast.LENGTH_LONG).show();
-						finish();
-					}
-					catch (Exception e)
-					{
-						Toast.makeText(v.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-					}
-				}
-			});
 		}
 		catch (Exception e)
 		{
 			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
 		}
+			
+		Button button = (Button)findViewById(R.id._ReviewBook_DatePickerButton);
+		button.setOnClickListener(new View.OnClickListener() 
+        {
+            public void onClick(View v) 
+            {
+                showDialog(DATE_DIALOG_ID);
+            }
+        });	
+		
+		button = (Button)findViewById(R.id._ReviewBook_PickShelvesButton);
+		button.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				showDialog(PICK_SHELVES_DIALOG);
+			}
+		});
+		
+		button = (Button)findViewById(R.id._ReviewBook_SubmitButton);
+		button.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				try
+				{
+					TextView textView = (TextView)findViewById(R.id._ReviewBook_Review);
+					String review = textView.getText().toString();
+					RatingBar ratingBar = (RatingBar)findViewById(R.id._ReviewBook_Rating);
+					int rating = (int)ratingBar.getRating();
+					
+					if (_ReviewId != null && !_ReviewId.equalsIgnoreCase(""))
+					{
+						ResponseParser.UpdateReview(_ReviewId, review, _DateRead, _Shelves, rating);
+					}
+					else
+					{
+						ResponseParser.PostReview(_BookId, review, _DateRead, _Shelves, rating);
+					}
+					Toast.makeText(v.getContext(), "Review submitted", Toast.LENGTH_LONG).show();
+					finish();
+				}
+				catch (Exception e)
+				{
+					Toast.makeText(v.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+				}
+			}
+		});
 	}
 	
     @Override
