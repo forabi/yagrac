@@ -71,6 +71,7 @@
 		android:gravity="top"
 		android:layout_height="0px"
 		android:layout_width="fill_parent"
+		android:inputType="textCapSentences|textLongMessage|textMultiLine"
 		android:layout_weight="1"></EditText>
 	<Button
 		android:id="@+id/_ReviewBook_SubmitButton"

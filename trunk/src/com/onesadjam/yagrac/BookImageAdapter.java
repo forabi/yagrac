@@ -92,7 +92,7 @@ public class BookImageAdapter extends BaseAdapter
 		{
 			bookImage = LazyImageLoader.LazyLoadImageView(
 					_Context, 
-					new URL(_Reviews.get(position).get_Book().get_SmallImageUrl()), 
+					new URL(_Reviews.get(position).get_Book().get_ImageUrl()), 
 					R.drawable.nocover,
 					bookImage);
 
