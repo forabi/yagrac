@@ -113,8 +113,11 @@ public class EventsActivity extends Activity
 				String formattedDate = "";
 				try
 				{
-					Date timestamp = _GoodreadsDateFormat.parse(event.get_EventAt());
-					formattedDate = timestamp.toLocaleString();
+					if (event.get_EventAt() != null)
+					{
+						Date timestamp = _GoodreadsDateFormat.parse(event.get_EventAt());
+						formattedDate = timestamp.toLocaleString();
+					}
 				}
 				catch (ParseException e)
 				{
