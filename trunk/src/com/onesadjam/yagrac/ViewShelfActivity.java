@@ -305,6 +305,7 @@ public class ViewShelfActivity extends Activity
 					_ReviewsPerPage = result.get_End();
 					List<Review> reviews = result.get_Reviews();
 					_BookGalleryAdapter.clear();
+					_BookGalleryAdapter.notifyDataSetInvalidated();
 					for (int i = 0; i < reviews.size(); i++)
 					{
 						_BookGalleryAdapter.AddBook(reviews.get(i));
