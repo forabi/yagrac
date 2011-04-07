@@ -588,13 +588,14 @@ public class ResponseParser
 		builder.appendQueryParameter("key", _ConsumerKey);
 		builder.appendQueryParameter("page", Integer.toString(page));
 		builder.appendQueryParameter("id", bookId);
+		builder.appendQueryParameter("format", "xml");
 
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpGet getRequest = new HttpGet(builder.build().toString());
-//		if (get_IsAuthenticated())
-//		{
-//			_Consumer.sign(getRequest);
-//		}
+		if (get_IsAuthenticated())
+		{
+			_Consumer.sign(getRequest);
+		}
 		HttpResponse response = httpClient.execute(getRequest);
 		
 		Response responseData = ResponseParser.parse(response.getEntity().getContent());
