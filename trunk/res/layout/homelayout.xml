@@ -70,7 +70,7 @@
 		<RelativeLayout
 			android:layout_width="fill_parent"
 	        android:layout_height="fill_parent" >		
-			<com.admob.android.ads.AdView
+			<com.google.ads.AdView
 				android:id="@+id/_HomeAd"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
