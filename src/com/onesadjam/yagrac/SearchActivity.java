@@ -25,6 +25,8 @@ package com.onesadjam.yagrac;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.ads.AdRequest;
+import com.google.ads.AdView;
 import com.onesadjam.yagrac.xml.BestBook;
 import com.onesadjam.yagrac.xml.ResponseParser;
 import com.onesadjam.yagrac.xml.Search;
@@ -92,6 +94,9 @@ public class SearchActivity extends Activity
 				performSearch();
 			}
 		});
+		
+		AdView adView = (AdView)this.findViewById(R.id._SearchAd);
+	    adView.loadAd(new AdRequest());
 	}
 	
 	@Override
@@ -104,51 +109,11 @@ public class SearchActivity extends Activity
 	private void performSearch()
 	{
 		EditText searchTextView = (EditText) findViewById(R.id._SearchText);
-		ListView listView = (ListView)findViewById(R.id._SearchResultsList);
 		CharSequence searchString = searchTextView.getText();
-		try
-		{
-			SearchResultAdapter searchAdapter = new SearchResultAdapter(_Context);
-			
-			Search search = ResponseParser.Search(searchString.toString());
-			if (search != null)
-			{
-				List<Work> works = search.get_Results();
-				if ( works != null )
-				{
-					if (works.size() == 0)
-					{
-						Toast toast = Toast.makeText(_Context, "no matches", Toast.LENGTH_SHORT);
-						toast.show();
-					}
-					for ( int i = 0; i < works.size(); i++ )
-					{
-						searchAdapter.addResult(works.get(i));
-					}
-				}
-			}
-			
-			listView.setAdapter(searchAdapter);
-			
-			listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-			{
-				@Override
-				public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
-				{
-					Work clickedBook = (Work)arg0.getAdapter().getItem(arg2);
-					Intent viewBookIntent = new Intent(arg1.getContext(), ViewBookActivity.class);
-					viewBookIntent.putExtra("com.onesadjam.yagrac.BookId", Integer.toString(clickedBook.get_BestBook().get_Id()));
-					viewBookIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
-					arg1.getContext().startActivity(viewBookIntent);				
-
-				}
-			});
-
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		
+		_BusySpinner = ProgressDialog.show(this, "", "Searching...");
+		
+		new SearchTask().execute(searchString.toString());
 	}
 	
 	@Override
@@ -391,5 +356,74 @@ public class SearchActivity extends Activity
 			}
 		});
 		builder.create().show();
+	}
+	
+	/**
+	 * Background task for book search.
+	 * @author ajones
+	 *
+	 */
+	private class SearchTask extends AsyncTask<String, Void, List<Work>>
+	{
+		@Override
+		protected List<Work> doInBackground(String... params)
+		{
+			List<Work> searchResults = null;
+			Search search;
+			if (params != null && params.length > 0)
+			{
+				try
+				{
+					search = ResponseParser.Search(params[0]);
+					searchResults = search.get_Results();
+				}
+				catch (Exception e){}
+			}
+			return searchResults;
+		}
+
+		@Override
+		protected void onPostExecute(List<Work> result)
+		{
+			try
+			{
+				if (result != null)
+				{
+					if (result.size() == 0)
+					{
+						Toast toast = Toast.makeText(_Context, "no matches", Toast.LENGTH_SHORT);
+						toast.show();
+					}
+					else
+					{
+						ListView listView = (ListView)findViewById(R.id._SearchResultsList);
+						SearchResultAdapter searchAdapter = new SearchResultAdapter(_Context);
+						for ( int i = 0; i < result.size(); i++ )
+						{
+							searchAdapter.addResult(result.get(i));
+						}
+						listView.setAdapter(searchAdapter);
+						
+						listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+						{
+							@Override
+							public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+							{
+								Work clickedBook = (Work)arg0.getAdapter().getItem(arg2);
+								Intent viewBookIntent = new Intent(arg1.getContext(), ViewBookActivity.class);
+								viewBookIntent.putExtra("com.onesadjam.yagrac.BookId", Integer.toString(clickedBook.get_BestBook().get_Id()));
+								viewBookIntent.putExtra("com.onesadjam.yagrac.AuthenticatedUserId", _AuthenticatedUserId);
+								arg1.getContext().startActivity(viewBookIntent);				
+	
+							}
+						});
+					}
+				}
+			}
+			finally
+			{
+				_BusySpinner.dismiss();
+			}
+		}
 	}
 }

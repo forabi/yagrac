@@ -22,6 +22,8 @@
 
 package com.onesadjam.yagrac;
 
+import com.google.ads.AdRequest;
+import com.google.ads.AdView;
 import com.onesadjam.yagrac.R;
 import com.onesadjam.yagrac.xml.ResponseParser;
 
@@ -142,6 +144,9 @@ public class HomeActivity extends Activity
 		myBooksButton.setEnabled(isAuthenticated);
 		updatesButton.setEnabled(isAuthenticated);
 		friendsButton.setEnabled(isAuthenticated);
+		
+		AdView adView = (AdView)this.findViewById(R.id._HomeAd);
+	    adView.loadAd(new AdRequest());
 	}
 
 	@Override

@@ -24,22 +24,27 @@
       android:versionCode="7"
       android:versionName="1.6" 
       package="com.onesadjam.yagrac">
+      
     <application 
     	android:theme="@style/MyTheme"
     	android:label="@string/app_name" 
     	android:debuggable="true"
     	android:icon="@drawable/ic_icon">
+    	
         <activity 
         	android:name=".HomeActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Light.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity 
         	android:name=".LoginActivity" 
-        	android:label="@string/app_name">
+        	android:label="@string/app_name"
+            android:theme="@android:style/Theme.Light.NoTitleBar">
             <intent-filter>
 				<action android:name="android.intent.action.VIEW"></action>  
 				<category android:name="android.intent.category.DEFAULT"></category>  
@@ -47,38 +52,122 @@
 				<data android:scheme="onesadjam" android:host="goodreads"></data> 
             </intent-filter>
         </activity>
-        <activity android:name=".SearchActivity" android:label="@string/app_name"></activity>
-        <activity android:name=".ViewShelfActivity" android:label="@string/app_name"></activity>
-        <activity android:name=".FriendsActivity" android:label="@string/app_name"></activity>
-        <activity android:name=".UpdatesActivity" android:label="@string/app_name"></activity>
-    	<activity android:screenOrientation="portrait" android:name=".FollowersActivity" android:label="@string/app_name"></activity>
-		<activity android:label="@string/app_name" android:name=".FollowingActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".SocialActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".UpdateStatusActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".ViewUserActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".ViewBookActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".ReviewBookActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".ViewBookReviewsActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".ViewBookDetailsActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".AboutActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".ScanActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".ViewUserUpdatesActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".ViewUserDetailsActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".ViewReviewActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".ViewReviewDetailsActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".ViewReviewCommentsActivity"></activity>
-		<activity android:label="@string/app_name" android:name=".EventsActivity"></activity>
+        
+        <activity 
+        	android:name=".SearchActivity" 
+        	android:label="@string/app_name"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+        <activity 
+        	android:name=".ViewShelfActivity" 
+        	android:label="@string/app_name"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+        <activity 
+        	android:name=".FriendsActivity" 
+        	android:label="@string/app_name"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+        <activity 
+        	android:name=".UpdatesActivity" 
+        	android:label="@string/app_name"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+    	<activity 
+    		android:screenOrientation="portrait" 
+    		android:name=".FollowersActivity" 
+    		android:label="@string/app_name"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".FollowingActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".SocialActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".UpdateStatusActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".ViewUserActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".ViewBookActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".ReviewBookActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".ViewBookReviewsActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".ViewBookDetailsActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".AboutActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".ScanActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".ViewUserUpdatesActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".ViewUserDetailsActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".ViewReviewActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".ViewReviewDetailsActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".ViewReviewCommentsActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+            
+		<activity 
+			android:label="@string/app_name" 
+			android:name=".EventsActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
 		<!-- Track Market installs from AdMob ads -->		
-		<receiver android:name="com.admob.android.ads.analytics.InstallReceiver" android:exported="true">
-			<intent-filter>
-				<action android:name="com.android.vending.INSTALL_REFERRER" />
-			</intent-filter>
-		</receiver>
-		<meta-data android:value="a14c77dda100acf" android:name="ADMOB_PUBLISHER_ID" />
+		<activity 
+			android:name="com.google.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation"/>
+            
 	</application>
     <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="4" />
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 	<supports-screens 
 		android:smallScreens="true"
 		android:normalScreens="true"
