@@ -25,7 +25,7 @@
   android:orientation="vertical"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:gravity="center_horizontal"
+  android:gravity="center_horizontal" 
   android:background="#FFF">
 	<ImageView 
 		android:id="@+id/_LoginHeaderImageView" 
