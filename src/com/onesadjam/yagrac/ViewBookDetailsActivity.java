@@ -26,6 +26,9 @@ import java.net.URL;
 import com.onesadjam.yagrac.xml.Book;
 import com.onesadjam.yagrac.xml.ResponseParser;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.widget.ImageView;
@@ -38,6 +41,8 @@ public class ViewBookDetailsActivity extends Activity
 	private static final int BOOK_IMAGE_HEIGHT = 160;
 	private static final int BOOK_IMAGE_WIDTH = 120;
 
+	private Context _Context = this;
+	private ProgressDialog _BusySpinner;
 	private String _BookId;
 
 	@Override
@@ -49,32 +54,61 @@ public class ViewBookDetailsActivity extends Activity
 
 		_BookId = getIntent().getExtras().getString("com.onesadjam.yagrac.BookId");
 		
-		try
+		_BusySpinner = ProgressDialog.show(this, "", "Retrieving book details...");
+		
+		new GetBookDetailsTask().execute(_BookId);
+	}
+	
+	private class GetBookDetailsTask extends AsyncTask<String, Void, Book>
+	{
+		@Override
+		protected Book doInBackground(String... params)
 		{
-			Book bookDetails = ResponseParser.GetReviewsForBook(_BookId);
-			ImageView bookImage = (ImageView)findViewById(R.id._ViewBookImage);
-			bookImage.setScaleType(ScaleType.FIT_CENTER);
-			bookImage.setMinimumHeight((int)(BOOK_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
-			bookImage.setMinimumWidth((int)(BOOK_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
-			LazyImageLoader.LazyLoadImageView(this, new URL(bookDetails.get_ImageUrl()), R.drawable.nocover, bookImage);
-			
-			StringBuilder sb = new StringBuilder();
-			
-			sb.append(bookDetails.get_Title() + "<br />by<br />");
-			for (int a = 0; a < bookDetails.get_Authors().size(); a++)
+			Book bookDetails = null;
+			if (params != null && params.length > 0)
 			{
-				sb.append("\t" + bookDetails.get_Authors().get(a).get_Name() + "<br /><br />");
+				try
+				{
+					bookDetails = ResponseParser.GetReviewsForBook(params[0]);
+				}
+				catch (Exception e){}
 			}
-			
-			sb.append("<b>Description</b><br />");
-			sb.append(bookDetails.get_Description());
-			
-			TextView textView = (TextView)findViewById(R.id._ViewBook_Text);
-			textView.setText(Html.fromHtml(sb.toString()));
+			return bookDetails;
 		}
-		catch (Exception e)
+
+		@Override
+		protected void onPostExecute(Book bookDetails)
 		{
-			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+			try
+			{
+				ImageView bookImage = (ImageView)findViewById(R.id._ViewBookImage);
+				bookImage.setScaleType(ScaleType.FIT_CENTER);
+				bookImage.setMinimumHeight((int)(BOOK_IMAGE_HEIGHT * HomeActivity.get_ScalingFactor()));
+				bookImage.setMinimumWidth((int)(BOOK_IMAGE_WIDTH * HomeActivity.get_ScalingFactor()));
+				LazyImageLoader.LazyLoadImageView(_Context, new URL(bookDetails.get_ImageUrl()), R.drawable.nocover, bookImage);
+				
+				StringBuilder sb = new StringBuilder();
+				
+				sb.append(bookDetails.get_Title() + "<br />by<br />");
+				for (int a = 0; a < bookDetails.get_Authors().size(); a++)
+				{
+					sb.append("\t" + bookDetails.get_Authors().get(a).get_Name() + "<br /><br />");
+				}
+				
+				sb.append("<b>Description</b><br />");
+				sb.append(bookDetails.get_Description());
+				
+				TextView textView = (TextView)findViewById(R.id._ViewBook_Text);
+				textView.setText(Html.fromHtml(sb.toString()));
+			}
+			catch (Exception e)
+			{
+				Toast.makeText(_Context, e.getMessage(), Toast.LENGTH_LONG).show();
+			}
+			finally
+			{
+				_BusySpinner.dismiss();
+			}
 		}
 	}
 }
