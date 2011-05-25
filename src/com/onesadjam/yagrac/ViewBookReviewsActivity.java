@@ -109,7 +109,14 @@ public class ViewBookReviewsActivity extends Activity
 			}
 			finally
 			{
-				_BusySpinner.dismiss();
+				try
+				{
+					_BusySpinner.dismiss();
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}

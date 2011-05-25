@@ -110,20 +110,27 @@ public class UpdatesActivity extends Activity
 		@Override
 		protected void onPostExecute(List<Update> result)
 		{
-			if (result == null)
+			try
 			{
-				Toast.makeText(_Context, "Unable to retrieve updates.", Toast.LENGTH_LONG);
-			}
-			else
-			{
-				UpdateItemAdapter updateItemAdapter = new UpdateItemAdapter(_Context);
-				for (int i = 0; i < result.size(); i++ )
+				if (result == null)
 				{
-					updateItemAdapter.add(result.get(i));
+					Toast.makeText(_Context, "Unable to retrieve updates.", Toast.LENGTH_LONG);
 				}
-				_UpdatesList.setAdapter(updateItemAdapter);
+				else
+				{
+					UpdateItemAdapter updateItemAdapter = new UpdateItemAdapter(_Context);
+					for (int i = 0; i < result.size(); i++ )
+					{
+						updateItemAdapter.add(result.get(i));
+					}
+					_UpdatesList.setAdapter(updateItemAdapter);
+				}
+				_BusySpinner.dismiss();
 			}
-			_BusySpinner.dismiss();
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 }
