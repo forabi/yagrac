@@ -225,44 +225,51 @@ public class SearchActivity extends Activity
 		@Override
 		protected void onPostExecute(Search result)
 		{
-			_BusySpinner.dismiss();
-			AlertDialog.Builder builder = new AlertDialog.Builder(_Context);
-			if (result == null || result.get_TotalResults() == 0)
+			try
 			{
-				promptToScanNext("No books match that scan.");
-			}
-			else
-			{
-				_MatchingWorks = result.get_Results();
-				List<CharSequence> books = new ArrayList<CharSequence>();
-				for ( Work work : _MatchingWorks )
+				_BusySpinner.dismiss();
+				AlertDialog.Builder builder = new AlertDialog.Builder(_Context);
+				if (result == null || result.get_TotalResults() == 0)
 				{
-					books.add(work.get_BestBook().get_Title() + " by " + work.get_BestBook().get_Author().get_Name());
+					promptToScanNext("No books match that scan.");
 				}
-				books.add("I did not find a match, skip this book");
-
-				builder.setItems(books.toArray(new CharSequence[]{}), new DialogInterface.OnClickListener()
+				else
 				{
-					@Override
-					public void onClick(DialogInterface dialog, int which)
+					_MatchingWorks = result.get_Results();
+					List<CharSequence> books = new ArrayList<CharSequence>();
+					for ( Work work : _MatchingWorks )
 					{
-						dialog.dismiss();
-						if (which == _MatchingWorks.size())
-						{
-							promptToScanNext("Continue scanning.");
+						books.add(work.get_BestBook().get_Title() + " by " + work.get_BestBook().get_Author().get_Name());
 						}
-						else
+						books.add("I did not find a match, skip this book");
+
+						builder.setItems(books.toArray(new CharSequence[]{}), new DialogInterface.OnClickListener()
 						{
-							_BusySpinner = ProgressDialog.show(_Context, "", "Adding book to shelves...");
-							Work selectedWork = _MatchingWorks.get(which);
-							BestBook book = selectedWork.get_BestBook();
-							String bookId = Integer.toString(book.get_Id());
-							new AddBookToShelvesTask().execute(bookId);
+						@Override
+						public void onClick(DialogInterface dialog, int which)
+						{
+							dialog.dismiss();
+							if (which == _MatchingWorks.size())
+							{
+								promptToScanNext("Continue scanning.");
+							}
+							else
+							{
+								_BusySpinner = ProgressDialog.show(_Context, "", "Adding book to shelves...");
+								Work selectedWork = _MatchingWorks.get(which);
+								BestBook book = selectedWork.get_BestBook();
+								String bookId = Integer.toString(book.get_Id());
+								new AddBookToShelvesTask().execute(bookId);
+							}
 						}
-					}
-				});
+					});
 				
-				builder.create().show();
+					builder.create().show();
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
 			}
 		}
 	}
@@ -302,9 +309,16 @@ public class SearchActivity extends Activity
 		@Override
 		protected void onPostExecute(String result)
 		{
-			_BusySpinner.dismiss();
-			Toast.makeText(_Context, result, Toast.LENGTH_SHORT).show();
-			promptToScanNext("Continue scanning.");
+			try
+			{
+				_BusySpinner.dismiss();
+				Toast.makeText(_Context, result, Toast.LENGTH_SHORT).show();
+				promptToScanNext("Continue scanning.");
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 	

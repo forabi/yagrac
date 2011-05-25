@@ -24,7 +24,6 @@ package com.onesadjam.yagrac;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -165,14 +164,21 @@ public class EventsActivity extends Activity
 		@Override
 		protected void onPostExecute(Location result)
 		{
-			_BusySpinner.dismiss();
-			if (result == null)
+			try
 			{
-				Toast.makeText(_Context, "Unable to retrieve location. Loading default event list.", Toast.LENGTH_LONG);
+				_BusySpinner.dismiss();
+				if (result == null)
+				{
+					Toast.makeText(_Context, "Unable to retrieve location. Loading default event list.", Toast.LENGTH_LONG);
+				}
+				_BusySpinner = ProgressDialog.show(_Context, "", "Loading events...");
+				
+				new LoadEventsTask().execute(result);
 			}
-			_BusySpinner = ProgressDialog.show(_Context, "", "Loading events...");
-			
-			new LoadEventsTask().execute(result);
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -202,19 +208,26 @@ public class EventsActivity extends Activity
 		@Override
 		protected void onPostExecute(List<Event> result)
 		{
-			_BusySpinner.dismiss();
-			if (result == null)
+			try
 			{
-				Toast.makeText(_Context, "Unable to retrieve events.", Toast.LENGTH_LONG);
-				return;
-			}
+				_BusySpinner.dismiss();
+				if (result == null)
+				{
+					Toast.makeText(_Context, "Unable to retrieve events.", Toast.LENGTH_LONG);
+					return;
+				}
 			
-			_Adapter.clear();
-			for (int i = 0; i < result.size(); i++ )
-			{
-				_Adapter.add(result.get(i));
+				_Adapter.clear();
+				for (int i = 0; i < result.size(); i++ )
+				{
+					_Adapter.add(result.get(i));
+				}
+				_Adapter.notifyDataSetChanged();
 			}
-			_Adapter.notifyDataSetChanged();
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 

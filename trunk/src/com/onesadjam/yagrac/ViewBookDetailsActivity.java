@@ -107,7 +107,16 @@ public class ViewBookDetailsActivity extends Activity
 			}
 			finally
 			{
-				_BusySpinner.dismiss();
+				// Could have another exception here if the user changed
+				// orientation and the previous activity was gc'ed.
+				try
+				{
+					_BusySpinner.dismiss();
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
