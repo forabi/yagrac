@@ -22,7 +22,6 @@
 
 package com.onesadjam.yagrac;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -34,11 +33,30 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.ImageView;
 
+/**
+ * Class for loading images in a background thread.
+ * @author ajones
+ *
+ */
 public class LazyImageLoader
 {
 	private static Map<URL, Drawable> _CachedImages = new HashMap<URL, Drawable>();
 	
-	public static ImageView LazyLoadImageView(Context context, final URL imageUrl, int defaultImage, final ImageView convertImageView) 
+	/**
+	 * Loads an image in a background thread and populates a drawable with the image when complete.
+	 * If the request for the image fails for any reason, the background thread terminates and
+	 * leaves the drawable unmodified.
+	 * @param context Current context of the drawable to be updated.
+	 * @param imageUrl URL of the image to retrieve.
+	 * @param defaultImage Image to use for the drawable until the requested image is received.
+	 * @param convertImageView Drawable object to populate with the image.  If null, creates a new ImageView.
+	 * @return Reference to the ImageView that will display the image.
+	 */
+	public static ImageView LazyLoadImageView(
+			Context context, 
+			final URL imageUrl, 
+			int defaultImage, 
+			final ImageView convertImageView) 
 	{
 		final ImageView imageView = (convertImageView == null) ? new ImageView(context) : convertImageView;
 
@@ -76,7 +94,7 @@ public class LazyImageLoader
 		    			imageLoadedHandler.sendMessage(message);
 					}
 				}
-				catch (IOException e)
+				catch (Exception e)
 				{
 					e.printStackTrace();
 				}

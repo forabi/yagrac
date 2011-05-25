@@ -78,8 +78,14 @@ public class ResponseParser
 		response.set_Comments(Comments.appendSingletonListener(root, 0));
 		response.set_Events(Event.appendArrayListener(root, 0));
 		
-		Xml.parse(inputStream, Xml.Encoding.UTF_8, root.getContentHandler());
-
+		try
+		{
+			Xml.parse(inputStream, Xml.Encoding.UTF_8, root.getContentHandler());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 		return response;
 	}
 	

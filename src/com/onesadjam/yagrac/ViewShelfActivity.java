@@ -45,6 +45,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
+/**
+ * Activity for displaying the books on a user's shelf.
+ * The user may select the shelf to view.
+ * @author ajones
+ *
+ */
 public class ViewShelfActivity extends Activity
 {
 	private String _UserId; 
@@ -292,32 +298,42 @@ public class ViewShelfActivity extends Activity
 		@Override
 		protected void onPostExecute(Reviews result)
 		{
-			if (result == null)
+			// It is possible that the activity was removed prior to the completion of
+			// the background thread.  If this happens, the onPostExecute will be
+			// attempting to work with UI elements that are in an invalid state.
+			try
 			{
-				Toast.makeText(_Context, "Unable to retrieve books on shelf.", Toast.LENGTH_LONG);
-			}
-			else
-			{
-				try
+				if (result == null)
 				{
-					_ReviewsOnCurrentShelf = result.get_Total();
-					_ReviewsLoaded = result.get_End();
-					_ReviewsPerPage = result.get_End();
-					List<Review> reviews = result.get_Reviews();
-					_BookGalleryAdapter.clear();
-					_BookGalleryAdapter.notifyDataSetInvalidated();
-					for (int i = 0; i < reviews.size(); i++)
+					Toast.makeText(_Context, "Unable to retrieve books on shelf.", Toast.LENGTH_LONG);
+				}
+				else
+				{
+					try
 					{
-						_BookGalleryAdapter.AddBook(reviews.get(i));
+						_ReviewsOnCurrentShelf = result.get_Total();
+						_ReviewsLoaded = result.get_End();
+						_ReviewsPerPage = result.get_End();
+						List<Review> reviews = result.get_Reviews();
+						_BookGalleryAdapter.clear();
+						_BookGalleryAdapter.notifyDataSetInvalidated();
+						for (int i = 0; i < reviews.size(); i++)
+						{
+							_BookGalleryAdapter.AddBook(reviews.get(i));
+						}
+						_BookGalleryAdapter.notifyDataSetChanged();
 					}
-					_BookGalleryAdapter.notifyDataSetChanged();
+					catch (Exception e)
+					{
+						Toast.makeText(_Context, e.getMessage(), Toast.LENGTH_LONG).show();
+					}
 				}
-				catch (Exception e)
-				{
-					Toast.makeText(_Context, e.getMessage(), Toast.LENGTH_LONG).show();
-				}
+				_BusySpinner.dismiss();
 			}
-			_BusySpinner.dismiss();
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -342,37 +358,46 @@ public class ViewShelfActivity extends Activity
 		@Override
 		protected void onPostExecute(List<UserShelf> result)
 		{
-			ArrayAdapter<String> shelfSpinnerAdapter = new ArrayAdapter<String>(_Context, android.R.layout.simple_spinner_item);
-			shelfSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			Spinner shelfSpinner = (Spinner)findViewById(R.id._ShelfSpinner);
-			shelfSpinner.setAdapter(shelfSpinnerAdapter);
-			
-			List<UserShelf> userShelves = result;
-			_BusySpinner.dismiss();
-			if (result == null)
+			// Wrapping in try-catch block in case this thread is still running after the activity
+			// has been gc'ed.
+			try
 			{
-				Toast.makeText(_Context, "Error loading user shelves.", Toast.LENGTH_LONG);
-				return;
-			}
-			
-			for (int i = 0; i < userShelves.size(); i++)
-			{
-				shelfSpinnerAdapter.add(userShelves.get(i).get_Name());
-			}
-			
-			shelfSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-			{
-				@Override
-				public void onItemSelected(AdapterView<?> parentView, android.view.View selectedItemView, int position, long id)
+				ArrayAdapter<String> shelfSpinnerAdapter = new ArrayAdapter<String>(_Context, android.R.layout.simple_spinner_item);
+				shelfSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				Spinner shelfSpinner = (Spinner)findViewById(R.id._ShelfSpinner);
+				shelfSpinner.setAdapter(shelfSpinnerAdapter);
+				
+				List<UserShelf> userShelves = result;
+				_BusySpinner.dismiss();
+				if (result == null)
 				{
-					String shelfName = parentView.getItemAtPosition(position).toString();
-					_BusySpinner = ProgressDialog.show(_Context, "", "Loading books on " + shelfName + " shelf...");
-					new LoadShelfActivity().execute(_UserId, parentView.getItemAtPosition(position).toString());
+					Toast.makeText(_Context, "Error loading user shelves.", Toast.LENGTH_LONG);
+					return;
 				}
 				
-				@Override
-				public void onNothingSelected(AdapterView<?> parentview) {}
-			});
+				for (int i = 0; i < userShelves.size(); i++)
+				{
+					shelfSpinnerAdapter.add(userShelves.get(i).get_Name());
+				}
+				
+				shelfSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+				{
+					@Override
+					public void onItemSelected(AdapterView<?> parentView, android.view.View selectedItemView, int position, long id)
+					{
+						String shelfName = parentView.getItemAtPosition(position).toString();
+						_BusySpinner = ProgressDialog.show(_Context, "", "Loading books on " + shelfName + " shelf...");
+						new LoadShelfActivity().execute(_UserId, parentView.getItemAtPosition(position).toString());
+					}
+					
+					@Override
+					public void onNothingSelected(AdapterView<?> parentview) {}
+				});
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 }
