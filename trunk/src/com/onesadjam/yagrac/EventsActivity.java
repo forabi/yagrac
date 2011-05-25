@@ -52,6 +52,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Activity used to display the list of events that are scheduled in the user's area.
+ * @author ajones
+ *
+ */
 public class EventsActivity extends Activity
 {
 	private LayoutInflater _LayoutInflater;
@@ -119,7 +124,7 @@ public class EventsActivity extends Activity
 						formattedDate = timestamp.toLocaleString();
 					}
 				}
-				catch (ParseException e)
+				catch (Exception e)
 				{
 					formattedDate = event.get_EventAt();
 				}
